@@ -17,6 +17,12 @@ let db = null;
 async function initialize() {
   const SQL = await initSqlJs();
 
+  // data 디렉토리가 없으면 생성
+  const dataDir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
   // 기존 DB 파일이 있으면 로드
   if (fs.existsSync(DB_PATH)) {
     const buffer = fs.readFileSync(DB_PATH);

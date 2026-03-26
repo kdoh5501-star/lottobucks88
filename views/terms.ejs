@@ -1,0 +1,62 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; text-align: center; }
+  .terms-container { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+  .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 24px; }
+  .tab-btn { padding: 12px 24px; background: none; border: none; font-size: 1rem; font-weight: 500; color: #888; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tab-btn.active { color: #1B4F72; border-bottom-color: #1B4F72; }
+  .tab-content { display: none; line-height: 1.8; color: #444; }
+  .tab-content.active { display: block; }
+  .tab-content h3 { color: #1B4F72; margin: 24px 0 12px; }
+  .tab-content p { margin-bottom: 12px; }
+</style>
+
+<div class="page-banner"><div class="container"><h1>이용약관</h1></div></div>
+
+<div class="terms-container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('terms1', this)">이용약관</button>
+    <button class="tab-btn" onclick="switchTab('privacy', this)">개인정보처리방침</button>
+    <button class="tab-btn" onclick="switchTab('youth', this)">청소년보호정책</button>
+  </div>
+
+  <div class="tab-content active" id="tab-terms1">
+    <h3>제1조 (목적)</h3>
+    <p>이 약관은 주식회사 로또벅스88(이하 "회사")이 제공하는 서비스의 이용조건 및 절차, 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+    <h3>제2조 (정의)</h3>
+    <p>"서비스"란 회사가 웹사이트, 모바일 앱 등을 통해 제공하는 로또 번호 분석, 커뮤니티, 제품 판매 등 일체의 서비스를 의미합니다.</p>
+    <h3>제3조 (약관의 효력)</h3>
+    <p>본 약관은 서비스를 이용하고자 하는 모든 회원에게 적용됩니다. 약관에 동의하지 않을 경우 서비스 이용이 제한될 수 있습니다.</p>
+    <h3>제4조 (서비스의 제공)</h3>
+    <p>회사는 로또 번호 분석 및 추천 서비스를 제공하며, 이는 통계적 분석에 기반한 참고 자료로서 당첨을 보장하지 않습니다.</p>
+    <p style="color:#888; margin-top:32px; text-align:center; font-size:0.9rem;">시행일: 2026년 1월 1일</p>
+  </div>
+
+  <div class="tab-content" id="tab-privacy">
+    <h3>제1조 (개인정보의 수집 및 이용 목적)</h3>
+    <p>회사는 회원 관리, 서비스 제공, 마케팅 활용 등의 목적으로 개인정보를 수집합니다.</p>
+    <h3>제2조 (수집하는 개인정보 항목)</h3>
+    <p>필수: 아이디, 비밀번호, 이메일, 닉네임. 선택: 휴대폰 번호.</p>
+    <h3>제3조 (개인정보의 보유 및 이용기간)</h3>
+    <p>회원 탈퇴 시 즉시 파기합니다. 단, 관련 법령에 의해 보존이 필요한 경우 해당 기간 동안 보관합니다.</p>
+    <p style="color:#888; margin-top:32px; text-align:center; font-size:0.9rem;">시행일: 2026년 1월 1일</p>
+  </div>
+
+  <div class="tab-content" id="tab-youth">
+    <h3>청소년보호정책</h3>
+    <p>회사는 청소년이 건전한 인터넷 환경에서 서비스를 이용할 수 있도록 최선을 다하고 있습니다. 로또 구매는 만 19세 이상만 가능하며, 본 서비스는 로또 구매를 대행하지 않습니다.</p>
+    <p>청소년보호 책임자: 이철우 (대표이사, cwlee@lottobucks88.com)</p>
+    <p style="color:#888; margin-top:32px; text-align:center; font-size:0.9rem;">시행일: 2026년 1월 1일</p>
+  </div>
+</div>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+<%- include('partials/footer') %>

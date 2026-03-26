@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #E74C3C, #C0392B); color: white; padding: 48px 0; text-align: center; }
+  .live-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+  .video-area { background: #000; border-radius: 16px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.2rem; margin-bottom: 32px; position: relative; overflow: hidden; }
+  .live-badge { position: absolute; top: 16px; left: 16px; background: #E74C3C; color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .schedule-section h2 { color: #1B4F72; margin-bottom: 16px; }
+  .schedule-card { background: #F8F9FA; border-radius: 12px; padding: 20px; margin-bottom: 12px; display: flex; gap: 16px; align-items: center; }
+  .schedule-day { background: #1B4F72; color: white; padding: 12px 16px; border-radius: 8px; text-align: center; min-width: 60px; }
+  .schedule-day .day { font-size: 1.5rem; font-weight: 700; }
+  .schedule-day .label { font-size: 0.75rem; }
+  .schedule-info h4 { margin-bottom: 4px; }
+  .schedule-info p { color: #888; font-size: 0.9rem; }
+  .community-nav { display: flex; justify-content: center; gap: 8px; padding: 16px 0; background: #F8F9FA; border-bottom: 1px solid #eee; }
+  .community-nav a { padding: 8px 20px; border-radius: 20px; text-decoration: none; color: #666; font-weight: 500; }
+  .community-nav a.active { background: #E74C3C; color: white; }
+</style>
+
+<div class="page-banner"><div class="container"><h1><i class="fas fa-broadcast-tower"></i> 라이브 방송</h1><p>이철우PD의 실시간 로또 분석</p></div></div>
+
+<nav class="community-nav">
+  <a href="/board/free">자유게시판</a>
+  <a href="/board/review">당첨후기</a>
+  <a href="/board/share">번호공유</a>
+  <a href="/live" class="active">라이브 방송</a>
+</nav>
+
+<div class="live-container">
+  <div class="video-area">
+    <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>
+    <div style="text-align:center;">
+      <i class="fas fa-video" style="font-size:3rem; margin-bottom:12px; display:block;"></i>
+      <p>다음 방송: 매주 토요일 오후 7시</p>
+      <p style="font-size:0.9rem; color:#666;">방송 시작 시 자동으로 재생됩니다</p>
+    </div>
+  </div>
+
+  <div class="schedule-section">
+    <h2><i class="fas fa-calendar-alt"></i> 방송 스케줄</h2>
+    <div class="schedule-card">
+      <div class="schedule-day"><div class="label">매주</div><div class="day">토</div></div>
+      <div class="schedule-info"><h4>주간 로또 분석 라이브</h4><p>19:00 ~ 20:30 · 이번 주 당첨번호 분석 & 추천 번호 공개</p></div>
+    </div>
+    <div class="schedule-card">
+      <div class="schedule-day"><div class="label">매주</div><div class="day">수</div></div>
+      <div class="schedule-info"><h4>중간 점검 방송</h4><p>20:00 ~ 21:00 · 통계 분석 & 회원 Q&A</p></div>
+    </div>
+    <div class="schedule-card">
+      <div class="schedule-day"><div class="label">격주</div><div class="day">금</div></div>
+      <div class="schedule-info"><h4>스페셜 분석 방송</h4><p>19:30 ~ 21:00 · 특별 테마 분석 & 이벤트</p></div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

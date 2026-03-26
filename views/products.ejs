@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 60px 0; text-align: center; }
+  .page-banner h1 { font-size: 2.2rem; margin-bottom: 12px; }
+  .products-container { max-width: 960px; margin: 0 auto; padding: 48px 20px; }
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .product-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s; text-decoration: none; color: inherit; }
+  .product-card:hover { transform: translateY(-6px); }
+  .product-img { height: 220px; background: linear-gradient(135deg, #1B4F72, #2C3E50); display: flex; align-items: center; justify-content: center; font-size: 5rem; }
+  .product-body { padding: 28px; }
+  .product-body h3 { font-size: 1.2rem; margin-bottom: 8px; color: #1B4F72; }
+  .product-body p { color: #666; line-height: 1.6; margin-bottom: 16px; font-size: 0.95rem; }
+  .product-price { display: flex; align-items: baseline; gap: 8px; }
+  .product-price .original { color: #999; text-decoration: line-through; font-size: 0.9rem; }
+  .product-price .current { color: #E74C3C; font-size: 1.3rem; font-weight: 700; }
+  .product-badge { display: inline-block; padding: 4px 12px; background: #F39C12; color: white; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; }
+  @media (max-width: 768px) { .product-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1>제품소개</h1>
+    <p>로또벅스88의 프리미엄 제품 라인업</p>
+  </div>
+</div>
+
+<div class="products-container">
+  <div class="product-grid">
+    <a href="/product/book" class="product-card">
+      <div class="product-img">📖</div>
+      <div class="product-body">
+        <span class="product-badge">베스트셀러</span>
+        <h3>로또벅스88 서적</h3>
+        <p>10년간의 데이터 분석 노하우를 집대성한 로또 분석 가이드북. 초보자부터 전문가까지 활용 가능한 실전 전략서.</p>
+        <div class="product-price">
+          <span class="original">35,000원</span>
+          <span class="current">29,800원</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/product/machine" class="product-card">
+      <div class="product-img">🎰</div>
+      <div class="product-body">
+        <span class="product-badge">인기상품</span>
+        <h3>LB-88 Pro 분석기</h3>
+        <p>AI 기반 로또 번호 분석 하드웨어 디바이스. 독자적 알고리즘으로 최적의 번호 조합을 추천합니다.</p>
+        <div class="product-price">
+          <span class="original">498,000원</span>
+          <span class="current">398,000원</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/product/app" class="product-card">
+      <div class="product-img">📱</div>
+      <div class="product-body">
+        <span class="product-badge">NEW</span>
+        <h3>로또벅스88 앱</h3>
+        <p>언제 어디서나 스마트한 번호 분석. 실시간 당첨번호 알림부터 AI 분석까지 손안에서 간편하게.</p>
+        <div class="product-price">
+          <span class="current">무료 다운로드</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

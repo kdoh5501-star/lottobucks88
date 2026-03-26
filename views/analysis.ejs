@@ -1,0 +1,241 @@
+<%- include('partials/header') %>
+
+<style>
+  .page-banner { background: linear-gradient(135deg, #8E44AD, #6C3483); color: white; padding: 48px 0; text-align: center; }
+  .page-banner h1 { font-size: 2rem; margin-bottom: 8px; }
+  .analysis-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+
+  .generator-card { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 32px; }
+  .generator-card h2 { color: #1B4F72; margin-bottom: 20px; }
+
+  .gen-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+  .gen-option { padding: 16px; border: 2px solid #E0E0E0; border-radius: 12px; cursor: pointer; transition: all 0.3s; text-align: center; }
+  .gen-option:hover { border-color: #1B4F72; }
+  .gen-option.active { border-color: #1B4F72; background: #E8F4FD; }
+  .gen-option i { font-size: 1.5rem; color: #1B4F72; margin-bottom: 8px; display: block; }
+  .gen-option h4 { margin-bottom: 4px; }
+  .gen-option p { font-size: 0.85rem; color: #888; }
+
+  .filter-section { margin-bottom: 24px; padding: 20px; background: #F8F9FA; border-radius: 12px; }
+  .filter-section h4 { margin-bottom: 12px; color: #333; }
+  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filter-row label { font-size: 0.9rem; color: #555; min-width: 80px; }
+  .filter-row input, .filter-row select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; }
+  .number-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+  .number-picker .num-btn { width: 36px; height: 36px; border: 1px solid #ddd; border-radius: 50%; background: white; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+  .number-picker .num-btn:hover { border-color: #1B4F72; }
+  .number-picker .num-btn.selected { background: #E74C3C; color: white; border-color: #E74C3C; }
+  .number-picker .num-btn.included { background: #2ECC71; color: white; border-color: #2ECC71; }
+
+  .btn-generate { width: 100%; padding: 16px; background: linear-gradient(135deg, #8E44AD, #6C3483); color: white; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: transform 0.3s; }
+  .btn-generate:hover { transform: scale(1.02); }
+
+  .results-section { margin-top: 32px; }
+  .game-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 16px; }
+  .game-label { font-weight: 700; color: #1B4F72; font-size: 1rem; min-width: 80px; }
+  .game-balls { display: flex; gap: 8px; }
+  .lotto-ball { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: white; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+  .ball-yellow { background: linear-gradient(135deg, #F1C40F, #F39C12); }
+  .ball-blue { background: linear-gradient(135deg, #3498DB, #2980B9); }
+  .ball-red { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+  .ball-gray { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+  .ball-green { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+
+  .verify-section { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-top: 32px; }
+  .verify-section h2 { color: #1B4F72; margin-bottom: 20px; }
+  .verify-inputs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+  .verify-inputs input { width: 60px; padding: 10px; text-align: center; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 1.1rem; font-weight: 600; }
+  .verify-inputs input:focus { border-color: #1B4F72; outline: none; }
+  .verify-result { padding: 20px; border-radius: 12px; text-align: center; display: none; margin-top: 16px; }
+  .verify-result.win { background: #FEF9E7; border: 2px solid #F39C12; }
+  .verify-result.lose { background: #F8F9FA; border: 2px solid #ddd; }
+
+  @media (max-width: 768px) {
+    .gen-options { grid-template-columns: 1fr; }
+    .game-card { flex-direction: column; }
+    .lotto-ball { width: 38px; height: 38px; font-size: 0.9rem; }
+  }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-magic"></i> 번호 분석 / 생성</h1>
+    <p>데이터 기반 스마트 번호 생성 엔진</p>
+  </div>
+</div>
+
+<div class="analysis-container">
+  <div class="generator-card">
+    <h2><i class="fas fa-cogs"></i> 번호 생성기</h2>
+
+    <div class="gen-options">
+      <div class="gen-option active" data-method="smart" onclick="selectMethod(this)">
+        <i class="fas fa-brain"></i>
+        <h4>스마트 추천</h4>
+        <p>복합 알고리즘 기반 최적 번호</p>
+      </div>
+      <div class="gen-option" data-method="frequency" onclick="selectMethod(this)">
+        <i class="fas fa-chart-line"></i>
+        <h4>빈도 분석</h4>
+        <p>출현 빈도 기반 핫/콜드 조합</p>
+      </div>
+      <div class="gen-option" data-method="pattern" onclick="selectMethod(this)">
+        <i class="fas fa-project-diagram"></i>
+        <h4>패턴 분석</h4>
+        <p>최근 패턴 기반 예측 번호</p>
+      </div>
+      <div class="gen-option" data-method="random" onclick="selectMethod(this)">
+        <i class="fas fa-dice"></i>
+        <h4>랜덤 생성</h4>
+        <p>완전 무작위 번호 생성</p>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h4><i class="fas fa-filter"></i> 필터 설정</h4>
+      <div class="filter-row">
+        <label>생성 게임 수:</label>
+        <select id="gameCount">
+          <option value="1">1게임</option>
+          <option value="3">3게임</option>
+          <option value="5" selected>5게임</option>
+          <option value="10">10게임</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <label>제외 번호:</label>
+        <div class="number-picker" id="excludePicker">
+          <% for (let i = 1; i <= 45; i++) { %>
+            <button class="num-btn" data-num="<%= i %>" onclick="toggleExclude(this)"><%= i %></button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-generate" onclick="generateNumbers()">
+      <i class="fas fa-magic"></i> 번호 생성하기
+    </button>
+
+    <div class="results-section" id="resultsSection" style="display:none;">
+      <h3 style="color:#1B4F72; margin-bottom:16px;"><i class="fas fa-star"></i> 생성 결과</h3>
+      <div id="gameResults"></div>
+    </div>
+  </div>
+
+  <!-- 번호 검증 -->
+  <div class="verify-section">
+    <h2><i class="fas fa-check-circle"></i> 당첨 번호 검증</h2>
+    <p style="color:#888; margin-bottom:16px;">보유한 번호를 입력하고 회차를 선택하면 당첨 여부를 확인할 수 있습니다.</p>
+
+    <div class="verify-inputs">
+      <% for (let i = 0; i < 6; i++) { %>
+        <input type="number" class="verify-num" min="1" max="45" placeholder="<%= i+1 %>">
+      <% } %>
+      <select id="verifyDraw" style="padding:10px; border:2px solid #E0E0E0; border-radius:8px;">
+        <% results.forEach(r => { %>
+          <option value="<%= r.draw_no %>"><%= r.draw_no %>회</option>
+        <% }); %>
+      </select>
+      <button onclick="verifyNumbers()" style="padding:10px 24px; background:#1B4F72; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">검증하기</button>
+    </div>
+
+    <div class="verify-result" id="verifyResult"></div>
+  </div>
+</div>
+
+<script>
+  let selectedMethod = 'smart';
+  let excludeNumbers = [];
+
+  function selectMethod(el) {
+    document.querySelectorAll('.gen-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedMethod = el.dataset.method;
+  }
+
+  function toggleExclude(btn) {
+    const num = parseInt(btn.dataset.num);
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) {
+      excludeNumbers.push(num);
+    } else {
+      excludeNumbers = excludeNumbers.filter(n => n !== num);
+    }
+  }
+
+  function getBallClass(n) {
+    if (n <= 10) return 'ball-yellow';
+    if (n <= 20) return 'ball-blue';
+    if (n <= 30) return 'ball-red';
+    if (n <= 40) return 'ball-gray';
+    return 'ball-green';
+  }
+
+  async function generateNumbers() {
+    const count = document.getElementById('gameCount').value;
+
+    const res = await apiRequest('/analysis/generate', {
+      method: 'POST',
+      body: {
+        method: selectedMethod,
+        count: parseInt(count),
+        filters: { exclude: excludeNumbers }
+      }
+    });
+
+    if (res.success && res.games) {
+      const container = document.getElementById('gameResults');
+      container.innerHTML = '';
+
+      res.games.forEach((game, i) => {
+        const ballsHtml = game.map(n =>
+          `<div class="lotto-ball ${getBallClass(n)}">${n}</div>`
+        ).join('');
+
+        container.innerHTML += `
+          <div class="game-card">
+            <span class="game-label">Game ${String.fromCharCode(65 + i)}</span>
+            <div class="game-balls">${ballsHtml}</div>
+          </div>`;
+      });
+
+      document.getElementById('resultsSection').style.display = 'block';
+      showToast(`${res.games.length}게임 번호가 생성되었습니다!`, 'success');
+    }
+  }
+
+  async function verifyNumbers() {
+    const inputs = document.querySelectorAll('.verify-num');
+    const numbers = [...inputs].map(el => parseInt(el.value)).filter(n => n >= 1 && n <= 45);
+
+    if (numbers.length !== 6 || new Set(numbers).size !== 6) {
+      return showToast('서로 다른 6개의 번호를 입력해주세요.', 'warning');
+    }
+
+    const drawNo = document.getElementById('verifyDraw').value;
+    const res = await apiRequest('/analysis/verify', {
+      method: 'POST',
+      body: { numbers, drawNo: parseInt(drawNo) }
+    });
+
+    if (res.success) {
+      const r = res.result;
+      const resultDiv = document.getElementById('verifyResult');
+      const isWin = r.rank !== '낙첨';
+      resultDiv.className = `verify-result ${isWin ? 'win' : 'lose'}`;
+      resultDiv.style.display = 'block';
+
+      if (isWin) {
+        resultDiv.innerHTML = `<h3 style="color:#F39C12; margin-bottom:8px;">🎉 축하합니다! ${r.rank} 당첨!</h3>
+          <p>일치 번호: ${r.matched}개 ${r.bonusMatched ? '(보너스 일치)' : ''}</p>
+          <p>일치한 번호: ${r.matchedNumbers.join(', ')}</p>`;
+      } else {
+        resultDiv.innerHTML = `<h3 style="color:#999;">😢 아쉽게도 낙첨입니다</h3>
+          <p>일치 번호: ${r.matched}개</p>
+          <p>다음에는 꼭 당첨되실 거예요!</p>`;
+      }
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

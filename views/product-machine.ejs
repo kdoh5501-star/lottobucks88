@@ -1,0 +1,51 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; }
+  .product-detail { max-width: 960px; margin: 0 auto; padding: 48px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .product-image { background: linear-gradient(135deg, #2C3E50, #1B4F72); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 8rem; }
+  .product-info h1 { font-size: 1.8rem; color: #1B4F72; margin-bottom: 12px; }
+  .product-info .price-box { margin: 20px 0; }
+  .product-info .original { color: #999; text-decoration: line-through; font-size: 1.1rem; }
+  .product-info .current { color: #E74C3C; font-size: 2rem; font-weight: 700; }
+  .product-info .desc { color: #555; line-height: 1.8; margin: 20px 0; }
+  .btn-buy { display: inline-block; padding: 16px 48px; background: #E74C3C; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .specs-table { width: 100%; border-collapse: collapse; margin: 32px auto; max-width: 960px; }
+  .specs-table th, .specs-table td { padding: 14px 20px; border-bottom: 1px solid #eee; text-align: left; }
+  .specs-table th { background: #F8F9FA; color: #1B4F72; width: 30%; font-weight: 600; }
+  @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-banner"><div class="container"><p style="opacity:0.8;"><a href="/products" style="color:white; text-decoration:none;">제품소개</a> &gt; 분석기</p></div></div>
+
+<div class="product-detail">
+  <div class="product-image">🎰</div>
+  <div class="product-info">
+    <span style="display:inline-block; padding:4px 12px; background:#E74C3C; color:white; border-radius:20px; font-size:0.8rem; font-weight:600; margin-bottom:12px;">인기상품</span>
+    <h1>LB-88 Pro 분석기</h1>
+    <p style="color:#888;">AI 기반 로또 번호 분석 디바이스</p>
+    <div class="price-box">
+      <span class="original">498,000원</span><br>
+      <span class="current">398,000원</span>
+      <span style="background:#E74C3C; color:white; padding:2px 8px; border-radius:4px; font-size:0.8rem; margin-left:8px;">20% OFF</span>
+    </div>
+    <p class="desc">독자적인 AI 알고리즘을 탑재한 전용 분석 하드웨어입니다. 터치스크린 인터페이스로 간편하게 조작하며, Wi-Fi 연결을 통해 실시간 당첨번호 업데이트와 클라우드 분석이 가능합니다.</p>
+    <a href="#" class="btn-buy" onclick="showToast('구매 기능은 준비 중입니다.', 'warning'); return false;">구매하기</a>
+  </div>
+</div>
+
+<div style="max-width:960px; margin:0 auto; padding:0 20px 48px;">
+  <h2 style="color:#1B4F72; margin-bottom:20px;">제품 사양</h2>
+  <table class="specs-table">
+    <tr><th>모델명</th><td>LB-88 Pro</td></tr>
+    <tr><th>디스플레이</th><td>5인치 터치스크린 LCD</td></tr>
+    <tr><th>프로세서</th><td>AI 전용 칩셋 (자체 개발)</td></tr>
+    <tr><th>분석 알고리즘</th><td>빈도 분석, 패턴 인식, 머신러닝 예측</td></tr>
+    <tr><th>연결</th><td>Wi-Fi, Bluetooth 5.0, USB-C</td></tr>
+    <tr><th>배터리</th><td>4,000mAh (약 8시간 사용)</td></tr>
+    <tr><th>크기/무게</th><td>140 x 75 x 12mm / 185g</td></tr>
+    <tr><th>색상</th><td>화이트, 블랙</td></tr>
+    <tr><th>보증기간</th><td>1년 (무상 A/S)</td></tr>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

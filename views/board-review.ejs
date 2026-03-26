@@ -1,0 +1,91 @@
+<%- include('partials/header') %>
+
+<style>
+  .page-banner { background: linear-gradient(135deg, #E74C3C, #C0392B); color: white; padding: 48px 0; text-align: center; }
+  .page-banner h1 { font-size: 2rem; margin-bottom: 8px; }
+  .board-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+  .community-nav { display: flex; justify-content: center; gap: 8px; padding: 16px 0; background: #F8F9FA; border-bottom: 1px solid #eee; }
+  .community-nav a { padding: 8px 20px; border-radius: 20px; text-decoration: none; color: #666; font-weight: 500; }
+  .community-nav a.active { background: #E74C3C; color: white; }
+  .community-nav a:hover { background: #FDEDEC; color: #E74C3C; }
+
+  .review-card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; gap: 20px; transition: transform 0.2s; }
+  .review-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .review-rank { flex-shrink: 0; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: white; }
+  .rank-1 { background: linear-gradient(135deg, #F39C12, #E67E22); }
+  .rank-2 { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+  .rank-3 { background: linear-gradient(135deg, #E67E22, #D35400); }
+  .rank-4 { background: linear-gradient(135deg, #3498DB, #2980B9); }
+  .rank-5 { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+  .review-body { flex: 1; }
+  .review-body h3 { margin-bottom: 8px; }
+  .review-body h3 a { color: #333; text-decoration: none; }
+  .review-body h3 a:hover { color: #E74C3C; }
+  .review-body .meta { color: #999; font-size: 0.85rem; }
+  .review-body .preview { color: #666; margin-top: 8px; font-size: 0.95rem; line-height: 1.5; }
+  .review-stats { display: flex; gap: 16px; margin-top: 12px; font-size: 0.85rem; color: #999; }
+
+  .btn-write { padding: 10px 20px; background: #E74C3C; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+
+  .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 32px; }
+  .pagination a, .pagination span { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; color: #333; text-decoration: none; }
+  .pagination .active { background: #E74C3C; color: white; border-color: #E74C3C; }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-trophy"></i> 당첨후기</h1>
+    <p>로또벅스88 회원들의 실제 당첨 이야기</p>
+  </div>
+</div>
+
+<nav class="community-nav">
+  <a href="/board/free">자유게시판</a>
+  <a href="/board/review" class="active">당첨후기</a>
+  <a href="/board/share">번호공유</a>
+  <a href="/live">라이브 방송</a>
+</nav>
+
+<div class="board-container">
+  <% if (isLoggedIn) { %>
+    <div style="text-align: right; margin-bottom: 20px;">
+      <a href="/board/review/write" class="btn-write"><i class="fas fa-pen"></i> 후기 작성</a>
+    </div>
+  <% } %>
+
+  <% if (posts && posts.length > 0) { %>
+    <% posts.forEach(post => { %>
+      <div class="review-card">
+        <div class="review-rank rank-<%= (post.category || '5').replace('등','') %>">
+          <%= post.category || '후기' %>
+        </div>
+        <div class="review-body">
+          <h3><a href="/board/review/<%= post.id %>"><%= post.title %></a></h3>
+          <div class="meta"><%= post.nickname %> · Lv.<%= post.level %></div>
+          <p class="preview"><%= post.content.substring(0, 100) %><%= post.content.length > 100 ? '...' : '' %></p>
+          <div class="review-stats">
+            <span><i class="fas fa-eye"></i> <%= post.view_count %></span>
+            <span><i class="fas fa-heart"></i> <%= post.like_count %></span>
+            <span><i class="fas fa-comment"></i> <%= post.comment_count %></span>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <div style="text-align:center; padding:60px; color:#999;">
+      <i class="fas fa-trophy" style="font-size:3rem; margin-bottom:16px; display:block;"></i>
+      아직 당첨 후기가 없습니다. 첫 번째 후기를 작성해보세요!
+    </div>
+  <% } %>
+
+  <% if (totalPages > 1) { %>
+    <div class="pagination">
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <% if (i === page) { %><span class="active"><%= i %></span><% } else { %>
+        <a href="/board/review?page=<%= i %>"><%= i %></a><% } %>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

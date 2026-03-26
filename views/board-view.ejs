@@ -1,0 +1,207 @@
+<%- include('partials/header') %>
+
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 32px 0; }
+  .page-banner .breadcrumb { font-size: 0.9rem; opacity: 0.8; }
+  .page-banner .breadcrumb a { color: white; text-decoration: none; }
+
+  .post-container { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+  .post-header { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+  .post-header h1 { font-size: 1.5rem; margin-bottom: 12px; line-height: 1.4; }
+  .post-meta { display: flex; gap: 16px; color: #888; font-size: 0.9rem; flex-wrap: wrap; }
+  .post-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .post-content { line-height: 1.8; font-size: 1rem; color: #333; margin-bottom: 32px; min-height: 200px; white-space: pre-wrap; }
+
+  .lotto-display { display: flex; gap: 8px; margin: 20px 0; }
+  .lotto-ball { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: white; }
+  .ball-yellow { background: linear-gradient(135deg, #F1C40F, #F39C12); }
+  .ball-blue { background: linear-gradient(135deg, #3498DB, #2980B9); }
+  .ball-red { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+  .ball-gray { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+  .ball-green { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+
+  .post-actions { display: flex; gap: 12px; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+  .btn-action { padding: 10px 20px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: all 0.3s; }
+  .btn-action:hover { background: #F8F9FA; }
+  .btn-action.liked { color: #E74C3C; border-color: #E74C3C; }
+  .btn-action.liked i { color: #E74C3C; }
+
+  .comments-section h3 { font-size: 1.1rem; margin-bottom: 20px; }
+  .comment-item { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+  .comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: #E8EEF2; display: flex; align-items: center; justify-content: center; color: #1B4F72; flex-shrink: 0; }
+  .comment-body { flex: 1; }
+  .comment-body .author { font-weight: 600; font-size: 0.9rem; }
+  .comment-body .author span { font-weight: 400; color: #999; margin-left: 8px; font-size: 0.8rem; }
+  .comment-body .text { margin-top: 6px; line-height: 1.5; font-size: 0.95rem; }
+  .comment-body .actions { margin-top: 6px; font-size: 0.85rem; color: #999; }
+  .comment-body .actions a { color: #999; text-decoration: none; margin-right: 12px; }
+  .comment-body .actions a:hover { color: #333; }
+
+  .comment-form { margin-top: 24px; }
+  .comment-form textarea { width: 100%; padding: 14px; border: 2px solid #E0E0E0; border-radius: 8px; resize: vertical; min-height: 80px; font-size: 0.95rem; box-sizing: border-box; }
+  .comment-form textarea:focus { border-color: #1B4F72; outline: none; }
+  .comment-form .form-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .btn-comment { padding: 10px 24px; background: #1B4F72; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+
+  .post-nav { display: flex; flex-direction: column; gap: 8px; margin-top: 32px; padding-top: 20px; border-top: 2px solid #eee; }
+  .post-nav a { padding: 12px 16px; background: #F8F9FA; border-radius: 8px; text-decoration: none; color: #333; display: flex; justify-content: space-between; }
+  .post-nav a:hover { background: #E8EEF2; }
+  .post-nav .label { color: #999; font-size: 0.85rem; flex-shrink: 0; margin-right: 12px; }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <p class="breadcrumb"><a href="/">홈</a> &gt; <a href="/board/<%= boardType %>"><%= boardName %></a> &gt; 게시글</p>
+  </div>
+</div>
+
+<div class="post-container">
+  <div class="post-header">
+    <% if (post.category) { %>
+      <span style="display:inline-block; padding:3px 10px; border-radius:4px; background:#E8F4FD; color:#2980B9; font-size:0.85rem; margin-bottom:8px;"><%= post.category %></span>
+    <% } %>
+    <h1><%= post.title %></h1>
+    <div class="post-meta">
+      <span><i class="fas fa-user"></i> <%= post.nickname %> (Lv.<%= post.level %>)</span>
+      <span><i class="fas fa-calendar"></i> <%= post.created_at %></span>
+      <span><i class="fas fa-eye"></i> 조회 <%= post.view_count %></span>
+      <span><i class="fas fa-heart"></i> 추천 <%= post.like_count %></span>
+    </div>
+  </div>
+
+  <% if (post.lotto_numbers) { try { const nums = JSON.parse(post.lotto_numbers); %>
+    <div class="lotto-display">
+      <% nums.forEach(n => { %>
+        <% let cls = n <= 10 ? 'ball-yellow' : n <= 20 ? 'ball-blue' : n <= 30 ? 'ball-red' : n <= 40 ? 'ball-gray' : 'ball-green'; %>
+        <div class="lotto-ball <%= cls %>"><%= n %></div>
+      <% }); %>
+    </div>
+  <% } catch(e) {} } %>
+
+  <div class="post-content"><%= post.content %></div>
+
+  <div class="post-actions">
+    <button class="btn-action <%= isLiked ? 'liked' : '' %>" id="btnLike" onclick="toggleLike()">
+      <i class="fas fa-heart"></i> 추천 <span id="likeCount"><%= post.like_count %></span>
+    </button>
+    <% if (isLoggedIn && (user.id === post.user_id || user.role === 'admin')) { %>
+      <button class="btn-action" onclick="deletePost()"><i class="fas fa-trash"></i> 삭제</button>
+    <% } %>
+    <a href="/board/<%= boardType %>" class="btn-action" style="text-decoration:none;"><i class="fas fa-list"></i> 목록</a>
+  </div>
+
+  <!-- 댓글 -->
+  <div class="comments-section">
+    <h3><i class="fas fa-comment"></i> 댓글 <span id="commentCount"><%= comments.length %></span>개</h3>
+
+    <div id="commentList">
+      <% comments.forEach(comment => { %>
+        <div class="comment-item">
+          <div class="comment-avatar"><i class="fas fa-user"></i></div>
+          <div class="comment-body">
+            <div class="author"><%= comment.nickname %> <span>Lv.<%= comment.level %> · <%= comment.created_at %></span></div>
+            <div class="text"><%= comment.content %></div>
+            <div class="actions">
+              <a href="#"><i class="fas fa-thumbs-up"></i> 좋아요</a>
+              <% if (isLoggedIn && (user.id === comment.user_id || user.role === 'admin')) { %>
+                <a href="#" onclick="deleteComment(<%= comment.id %>); return false;"><i class="fas fa-trash"></i> 삭제</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <% if (isLoggedIn) { %>
+      <div class="comment-form">
+        <textarea id="commentContent" placeholder="댓글을 입력하세요..."></textarea>
+        <div class="form-actions">
+          <button class="btn-comment" onclick="submitComment()">댓글 등록</button>
+        </div>
+      </div>
+    <% } else { %>
+      <p style="text-align:center; padding:20px; color:#999; background:#F8F9FA; border-radius:8px; margin-top:16px;">
+        댓글을 작성하려면 <a href="/login?redirect=<%= encodeURIComponent('/board/' + boardType + '/' + post.id) %>" style="color:#1B4F72; font-weight:600;">로그인</a>해주세요.
+      </p>
+    <% } %>
+  </div>
+
+  <!-- 이전/다음 글 -->
+  <div class="post-nav">
+    <% if (nextPost) { %>
+      <a href="/board/<%= boardType %>/<%= nextPost.id %>">
+        <span class="label">다음글</span> <%= nextPost.title %>
+      </a>
+    <% } %>
+    <% if (prevPost) { %>
+      <a href="/board/<%= boardType %>/<%= prevPost.id %>">
+        <span class="label">이전글</span> <%= prevPost.title %>
+      </a>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  async function toggleLike() {
+    const res = await apiRequest('/board/<%= boardType %>/<%= post.id %>/like', { method: 'POST' });
+    if (res.success) {
+      const btn = document.getElementById('btnLike');
+      const count = document.getElementById('likeCount');
+      let c = parseInt(count.textContent);
+      if (res.liked) {
+        btn.classList.add('liked');
+        count.textContent = c + 1;
+        showToast('추천했습니다!', 'success');
+      } else {
+        btn.classList.remove('liked');
+        count.textContent = c - 1;
+      }
+    }
+  }
+
+  async function deletePost() {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    const res = await apiRequest('/board/<%= boardType %>/<%= post.id %>/delete', { method: 'POST' });
+    if (res.success) {
+      showToast('삭제되었습니다.', 'success');
+      setTimeout(() => location.href = '/board/<%= boardType %>', 500);
+    }
+  }
+
+  async function submitComment() {
+    const content = document.getElementById('commentContent').value.trim();
+    if (!content) return showToast('댓글을 입력해주세요.', 'warning');
+
+    const res = await apiRequest('/board/<%= boardType %>/<%= post.id %>/comment', {
+      method: 'POST',
+      body: { content }
+    });
+
+    if (res.success && res.comment) {
+      const c = res.comment;
+      const html = `<div class="comment-item">
+        <div class="comment-avatar"><i class="fas fa-user"></i></div>
+        <div class="comment-body">
+          <div class="author">${c.nickname} <span>Lv.${c.level} · 방금 전</span></div>
+          <div class="text">${c.content}</div>
+        </div>
+      </div>`;
+      document.getElementById('commentList').insertAdjacentHTML('beforeend', html);
+      document.getElementById('commentContent').value = '';
+      document.getElementById('commentCount').textContent = parseInt(document.getElementById('commentCount').textContent) + 1;
+      showToast('댓글이 등록되었습니다. +5P', 'success');
+    }
+  }
+
+  async function deleteComment(id) {
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+    const res = await apiRequest('/board/comment/' + id + '/delete', { method: 'POST' });
+    if (res.success) {
+      showToast('댓글이 삭제되었습니다.', 'success');
+      setTimeout(() => location.reload(), 500);
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

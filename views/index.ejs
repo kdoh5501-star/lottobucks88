@@ -1,0 +1,204 @@
+<%- include('partials/header') %>
+
+<style>
+  .hero { background: linear-gradient(135deg, #1B4F72 0%, #2C3E50 100%); color: white; padding: 80px 0; text-align: center; }
+  .hero h1 { font-size: 2.5rem; margin-bottom: 16px; }
+  .hero p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 32px; }
+  .lotto-display { display: flex; justify-content: center; gap: 12px; margin: 30px 0; flex-wrap: wrap; align-items: center; }
+  .lotto-ball { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+  .ball-yellow { background: linear-gradient(135deg, #F1C40F, #F39C12); }
+  .ball-blue { background: linear-gradient(135deg, #3498DB, #2980B9); }
+  .ball-red { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+  .ball-gray { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+  .ball-green { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+  .ball-plus { font-size: 1.5rem; color: rgba(255,255,255,0.7); margin: 0 4px; }
+  .draw-info { font-size: 1rem; opacity: 0.8; margin-top: 12px; }
+
+  .section { padding: 60px 0; }
+  .section-title { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 40px; color: #1B4F72; }
+  .section-title span { color: #F39C12; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transition: transform 0.3s; }
+  .product-card:hover { transform: translateY(-4px); }
+  .product-card-img { height: 200px; background: linear-gradient(135deg, #1B4F72, #2C3E50); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+  .product-card-body { padding: 24px; }
+  .product-card-body h3 { font-size: 1.2rem; margin-bottom: 8px; }
+  .product-card-body p { color: #666; font-size: 0.95rem; margin-bottom: 16px; }
+  .product-card-body .price { color: #E74C3C; font-weight: 700; font-size: 1.1rem; }
+
+  .community-section { background: #F8F9FA; }
+  .board-preview { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .board-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .board-card h3 { font-size: 1.1rem; color: #1B4F72; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #F39C12; }
+  .board-card ul { list-style: none; padding: 0; }
+  .board-card li { padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+  .board-card li:last-child { border: none; }
+  .board-card li a { color: #333; text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .board-card li a:hover { color: #1B4F72; }
+  .board-card li .meta { color: #999; font-size: 0.85rem; flex-shrink: 0; margin-left: 12px; }
+
+  .cta-section { background: linear-gradient(135deg, #F39C12, #E67E22); color: white; text-align: center; padding: 60px 0; }
+  .cta-section h2 { font-size: 2rem; margin-bottom: 16px; }
+  .cta-section p { font-size: 1.1rem; margin-bottom: 24px; opacity: 0.95; }
+  .btn-cta { display: inline-block; background: white; color: #E67E22; padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; text-decoration: none; transition: transform 0.3s; }
+  .btn-cta:hover { transform: scale(1.05); }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8rem; }
+    .product-grid { grid-template-columns: 1fr; }
+    .board-preview { grid-template-columns: 1fr; }
+    .lotto-ball { width: 42px; height: 42px; font-size: 1rem; }
+  }
+</style>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <h1>데이터로 분석하는 스마트 로또</h1>
+    <p>10년간의 당첨 데이터 분석, 이철우PD와 함께하는 번호 전략</p>
+
+    <% if (latestDraw) { %>
+      <div class="lotto-display">
+        <% const nums = [latestDraw.num1, latestDraw.num2, latestDraw.num3, latestDraw.num4, latestDraw.num5, latestDraw.num6]; %>
+        <% nums.forEach(n => { %>
+          <% let ballClass = n <= 10 ? 'ball-yellow' : n <= 20 ? 'ball-blue' : n <= 30 ? 'ball-red' : n <= 40 ? 'ball-gray' : 'ball-green'; %>
+          <div class="lotto-ball <%= ballClass %>"><%= n %></div>
+        <% }); %>
+        <span class="ball-plus">+</span>
+        <% let bonusClass = latestDraw.bonus <= 10 ? 'ball-yellow' : latestDraw.bonus <= 20 ? 'ball-blue' : latestDraw.bonus <= 30 ? 'ball-red' : latestDraw.bonus <= 40 ? 'ball-gray' : 'ball-green'; %>
+        <div class="lotto-ball <%= bonusClass %>"><%= latestDraw.bonus %></div>
+      </div>
+      <p class="draw-info">제 <%= latestDraw.draw_no %>회 (<%= latestDraw.draw_date %>) | 1등 당첨금: <%= (latestDraw.prize_1st / 100000000).toFixed(1) %>억원</p>
+    <% } %>
+
+    <div style="margin-top: 24px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+      <a href="/analysis" class="btn-cta" style="background: #F39C12; color: white;">번호 분석하기</a>
+      <a href="/lotto" class="btn-cta">당첨번호 조회</a>
+    </div>
+  </div>
+</section>
+
+<!-- 제품 소개 -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">로또벅스88 <span>제품 라인업</span></h2>
+    <div class="product-grid">
+      <a href="/product/book" class="product-card" style="text-decoration:none; color:inherit;">
+        <div class="product-card-img">📖</div>
+        <div class="product-card-body">
+          <h3>로또벅스88 서적</h3>
+          <p>10년간의 데이터 분석 노하우를 담은 로또 분석 가이드북</p>
+          <span class="price">29,800원</span>
+        </div>
+      </a>
+      <a href="/product/machine" class="product-card" style="text-decoration:none; color:inherit;">
+        <div class="product-card-img">🎰</div>
+        <div class="product-card-body">
+          <h3>LB-88 Pro 분석기</h3>
+          <p>AI 기반 로또 번호 분석 하드웨어 디바이스</p>
+          <span class="price">398,000원</span>
+        </div>
+      </a>
+      <a href="/product/app" class="product-card" style="text-decoration:none; color:inherit;">
+        <div class="product-card-img">📱</div>
+        <div class="product-card-body">
+          <h3>로또벅스88 앱</h3>
+          <p>언제 어디서나 스마트한 번호 분석을 손안에서</p>
+          <span class="price">무료 / 프리미엄</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 커뮤니티 -->
+<section class="section community-section">
+  <div class="container">
+    <h2 class="section-title">실시간 <span>커뮤니티</span></h2>
+    <div class="board-preview">
+      <div class="board-card">
+        <h3><i class="fas fa-comments"></i> 자유게시판</h3>
+        <ul>
+          <% if (latestPosts && latestPosts.length > 0) { %>
+            <% latestPosts.filter(p => p.board_type === 'free').slice(0, 5).forEach(post => { %>
+              <li>
+                <a href="/board/free/<%= post.id %>"><%= post.title %></a>
+                <span class="meta"><%= post.nickname %></span>
+              </li>
+            <% }); %>
+          <% } else { %>
+            <li><span style="color:#999;">게시글이 없습니다.</span></li>
+          <% } %>
+        </ul>
+        <a href="/board/free" style="display:block; text-align:right; color:#1B4F72; font-size:0.9rem; margin-top:8px;">더보기 &rarr;</a>
+      </div>
+
+      <div class="board-card">
+        <h3><i class="fas fa-trophy"></i> 당첨후기</h3>
+        <ul>
+          <% if (reviewPosts && reviewPosts.length > 0) { %>
+            <% reviewPosts.forEach(post => { %>
+              <li>
+                <a href="/board/review/<%= post.id %>"><%= post.title %></a>
+                <span class="meta"><%= post.nickname %></span>
+              </li>
+            <% }); %>
+          <% } else { %>
+            <li><span style="color:#999;">게시글이 없습니다.</span></li>
+          <% } %>
+        </ul>
+        <a href="/board/review" style="display:block; text-align:right; color:#1B4F72; font-size:0.9rem; margin-top:8px;">더보기 &rarr;</a>
+      </div>
+
+      <div class="board-card">
+        <h3><i class="fas fa-fire"></i> 인기글 TOP 5</h3>
+        <ul>
+          <% if (popularPosts && popularPosts.length > 0) { %>
+            <% popularPosts.forEach((post, i) => { %>
+              <li>
+                <a href="/board/<%= post.board_type %>/<%= post.id %>"><strong><%= i + 1 %>.</strong> <%= post.title %></a>
+                <span class="meta"><i class="fas fa-heart"></i> <%= post.like_count %></span>
+              </li>
+            <% }); %>
+          <% } else { %>
+            <li><span style="color:#999;">게시글이 없습니다.</span></li>
+          <% } %>
+        </ul>
+      </div>
+
+      <div class="board-card">
+        <h3><i class="fas fa-share-alt"></i> 최신 번호 공유</h3>
+        <ul>
+          <% const sharePosts = latestPosts ? latestPosts.filter(p => p.board_type === 'share').slice(0, 5) : []; %>
+          <% if (sharePosts.length > 0) { %>
+            <% sharePosts.forEach(post => { %>
+              <li>
+                <a href="/board/share/<%= post.id %>"><%= post.title %></a>
+                <span class="meta"><%= post.nickname %></span>
+              </li>
+            <% }); %>
+          <% } else { %>
+            <li><span style="color:#999;">공유된 번호가 없습니다.</span></li>
+          <% } %>
+        </ul>
+        <a href="/board/share" style="display:block; text-align:right; color:#1B4F72; font-size:0.9rem; margin-top:8px;">더보기 &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>지금 바로 시작하세요!</h2>
+    <p>무료 회원가입으로 기본 분석 서비스를 이용해보세요</p>
+    <% if (!isLoggedIn) { %>
+      <a href="/register" class="btn-cta">무료 회원가입</a>
+    <% } else { %>
+      <a href="/analysis" class="btn-cta">번호 생성하기</a>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

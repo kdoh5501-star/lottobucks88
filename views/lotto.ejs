@@ -1,0 +1,118 @@
+<%- include('partials/header') %>
+
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; text-align: center; }
+  .page-banner h1 { font-size: 2rem; margin-bottom: 8px; }
+  .lotto-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+
+  .latest-draw { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center; margin-bottom: 32px; }
+  .latest-draw h2 { color: #1B4F72; margin-bottom: 8px; }
+  .latest-draw .draw-info { color: #888; margin-bottom: 20px; }
+  .lotto-display { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .lotto-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+  .ball-yellow { background: linear-gradient(135deg, #F1C40F, #F39C12); }
+  .ball-blue { background: linear-gradient(135deg, #3498DB, #2980B9); }
+  .ball-red { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+  .ball-gray { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+  .ball-green { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+  .ball-plus { font-size: 1.5rem; color: #ccc; }
+  .prize-info { margin-top: 16px; color: #666; }
+  .prize-info strong { color: #E74C3C; font-size: 1.2rem; }
+
+  .history-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .history-table th { background: #1B4F72; color: white; padding: 14px 16px; font-size: 0.9rem; }
+  .history-table td { padding: 14px 16px; text-align: center; border-bottom: 1px solid #eee; }
+  .history-table tr:hover { background: #FAFBFC; }
+  .mini-ball { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: white; margin: 0 2px; }
+
+  .frequency-section { margin-top: 32px; }
+  .frequency-section h3 { font-size: 1.2rem; color: #1B4F72; margin-bottom: 20px; }
+  .freq-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
+  .freq-item { text-align: center; padding: 8px; border-radius: 8px; background: #F8F9FA; }
+  .freq-item .number { font-weight: 700; font-size: 1.1rem; }
+  .freq-item .count { font-size: 0.8rem; color: #888; }
+  .freq-bar { height: 4px; border-radius: 2px; background: #eee; margin-top: 4px; overflow: hidden; }
+  .freq-bar-fill { height: 100%; border-radius: 2px; background: #1B4F72; }
+
+  @media (max-width: 768px) {
+    .freq-grid { grid-template-columns: repeat(5, 1fr); }
+    .history-table { font-size: 0.85rem; }
+    .mini-ball { width: 26px; height: 26px; font-size: 0.7rem; }
+  }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-search"></i> 당첨번호 조회</h1>
+    <p>최신 로또 당첨번호와 통계를 확인하세요</p>
+  </div>
+</div>
+
+<div class="lotto-container">
+  <% if (latestDraw) { %>
+    <div class="latest-draw">
+      <h2>제 <%= latestDraw.draw_no %>회 당첨번호</h2>
+      <p class="draw-info"><%= latestDraw.draw_date %> 추첨</p>
+      <div class="lotto-display">
+        <% const nums = [latestDraw.num1, latestDraw.num2, latestDraw.num3, latestDraw.num4, latestDraw.num5, latestDraw.num6]; %>
+        <% nums.forEach(n => { %>
+          <% let cls = n <= 10 ? 'ball-yellow' : n <= 20 ? 'ball-blue' : n <= 30 ? 'ball-red' : n <= 40 ? 'ball-gray' : 'ball-green'; %>
+          <div class="lotto-ball <%= cls %>"><%= n %></div>
+        <% }); %>
+        <span class="ball-plus">+</span>
+        <% let bCls = latestDraw.bonus <= 10 ? 'ball-yellow' : latestDraw.bonus <= 20 ? 'ball-blue' : latestDraw.bonus <= 30 ? 'ball-red' : latestDraw.bonus <= 40 ? 'ball-gray' : 'ball-green'; %>
+        <div class="lotto-ball <%= bCls %>"><%= latestDraw.bonus %></div>
+      </div>
+      <p class="prize-info">1등 당첨금: <strong><%= (latestDraw.prize_1st / 100000000).toFixed(1) %>억원</strong> (<%= latestDraw.winners_1st %>명)</p>
+    </div>
+  <% } %>
+
+  <h3 style="font-size:1.2rem; color:#1B4F72; margin-bottom:16px;"><i class="fas fa-history"></i> 최근 당첨번호</h3>
+  <table class="history-table">
+    <thead>
+      <tr>
+        <th>회차</th>
+        <th>추첨일</th>
+        <th>당첨번호</th>
+        <th>보너스</th>
+        <th>1등 당첨금</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(r => { %>
+        <tr>
+          <td><strong><%= r.draw_no %></strong></td>
+          <td><%= r.draw_date %></td>
+          <td>
+            <% [r.num1, r.num2, r.num3, r.num4, r.num5, r.num6].forEach(n => { %>
+              <% let c = n <= 10 ? 'ball-yellow' : n <= 20 ? 'ball-blue' : n <= 30 ? 'ball-red' : n <= 40 ? 'ball-gray' : 'ball-green'; %>
+              <span class="mini-ball <%= c %>"><%= n %></span>
+            <% }); %>
+          </td>
+          <td>
+            <% let bc = r.bonus <= 10 ? 'ball-yellow' : r.bonus <= 20 ? 'ball-blue' : r.bonus <= 30 ? 'ball-red' : r.bonus <= 40 ? 'ball-gray' : 'ball-green'; %>
+            <span class="mini-ball <%= bc %>"><%= r.bonus %></span>
+          </td>
+          <td><%= (r.prize_1st / 100000000).toFixed(1) %>억</td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div class="frequency-section">
+    <h3><i class="fas fa-chart-bar"></i> 번호별 출현 빈도 (최근 10회)</h3>
+    <% const maxFreq = Math.max(...Object.values(frequency)); %>
+    <div class="freq-grid">
+      <% for (let i = 1; i <= 45; i++) { %>
+        <div class="freq-item">
+          <% let fc = i <= 10 ? 'ball-yellow' : i <= 20 ? 'ball-blue' : i <= 30 ? 'ball-red' : i <= 40 ? 'ball-gray' : 'ball-green'; %>
+          <span class="mini-ball <%= fc %>" style="width:28px; height:28px; font-size:0.75rem;"><%= i %></span>
+          <div class="count"><%= frequency[i] %>회</div>
+          <div class="freq-bar"><div class="freq-bar-fill" style="width:<%= maxFreq > 0 ? (frequency[i]/maxFreq*100) : 0 %>%"></div></div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

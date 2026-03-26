@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <style>
+    /* 알림 토스트 */
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; }
+    .toast {
+      background: #333; color: white; padding: 14px 24px; border-radius: 8px;
+      margin-bottom: 10px; opacity: 0; transform: translateX(100%);
+      transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex; align-items: center; gap: 10px; min-width: 280px;
+    }
+    .toast.show { opacity: 1; transform: translateX(0); }
+    .toast.success { background: #2ecc71; }
+    .toast.error { background: #e74c3c; }
+    .toast.warning { background: #f39c12; }
+  </style>
+</head>
+<body>
+  <!-- 알림 컨테이너 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 상단바 -->
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-left">
+        <span><i class="fas fa-phone-alt"></i> 1588-8888</span>
+        <span><i class="fas fa-clock"></i> 평일 09:00 ~ 18:00</span>
+      </div>
+      <div class="top-bar-right">
+        <% if (isLoggedIn) { %>
+          <a href="/auth/mypage"><i class="fas fa-user"></i> <%= user.nickname %>님</a>
+          <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+        <% } else { %>
+          <a href="/login"><i class="fas fa-sign-in-alt"></i> 로그인</a>
+          <a href="/register"><i class="fas fa-user-plus"></i> 회원가입</a>
+        <% } %>
+        <a href="/support"><i class="fas fa-headset"></i> 고객센터</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 헤더 -->
+  <header class="header" id="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-icon">🎱</span>
+        <span class="logo-text">로또벅스<span class="logo-highlight">88</span></span>
+      </a>
+      <nav class="gnb">
+        <ul class="gnb-menu">
+          <li class="gnb-item">
+            <a href="/about" class="gnb-link">회사소개</a>
+          </li>
+          <li class="gnb-item has-dropdown">
+            <a href="/products" class="gnb-link">제품소개</a>
+            <div class="dropdown-menu">
+              <a href="/product/book" class="dropdown-item">로또벅스88 서적</a>
+              <a href="/product/machine" class="dropdown-item">LB-88 Pro 분석기</a>
+              <a href="/product/app" class="dropdown-item">로또벅스88 앱</a>
+            </div>
+          </li>
+          <li class="gnb-item has-dropdown">
+            <a href="/lotto" class="gnb-link">분석서비스</a>
+            <div class="dropdown-menu">
+              <a href="/lotto" class="dropdown-item">당첨번호 조회</a>
+              <a href="/analysis" class="dropdown-item">번호 분석/생성</a>
+            </div>
+          </li>
+          <li class="gnb-item has-dropdown">
+            <a href="/community" class="gnb-link">커뮤니티</a>
+            <div class="dropdown-menu">
+              <a href="/board/free" class="dropdown-item">자유게시판</a>
+              <a href="/board/review" class="dropdown-item">당첨후기</a>
+              <a href="/board/share" class="dropdown-item">번호공유</a>
+              <a href="/live" class="dropdown-item">라이브 방송</a>
+            </div>
+          </li>
+          <li class="gnb-item">
+            <a href="/support" class="gnb-link">고객센터</a>
+          </li>
+        </ul>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </header>

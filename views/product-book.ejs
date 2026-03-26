@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; }
+  .product-detail { max-width: 960px; margin: 0 auto; padding: 48px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .product-image { background: linear-gradient(135deg, #E8EEF2, #D5E0E8); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 8rem; }
+  .product-info h1 { font-size: 1.8rem; color: #1B4F72; margin-bottom: 12px; }
+  .product-info .price-box { margin: 20px 0; }
+  .product-info .original { color: #999; text-decoration: line-through; font-size: 1.1rem; }
+  .product-info .current { color: #E74C3C; font-size: 2rem; font-weight: 700; }
+  .product-info .desc { color: #555; line-height: 1.8; margin: 20px 0; }
+  .btn-buy { display: inline-block; padding: 16px 48px; background: #E74C3C; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn-cart { display: inline-block; padding: 16px 36px; background: white; color: #1B4F72; border: 2px solid #1B4F72; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-left: 12px; }
+  .features { max-width: 960px; margin: 0 auto; padding: 0 20px 48px; }
+  .features h2 { color: #1B4F72; margin-bottom: 20px; }
+  .feature-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .feature-item { padding: 20px; background: #F8F9FA; border-radius: 12px; }
+  .feature-item h4 { color: #1B4F72; margin-bottom: 8px; }
+  .feature-item p { color: #666; font-size: 0.95rem; }
+  @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } .feature-list { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-banner"><div class="container"><p style="opacity:0.8;"><a href="/products" style="color:white; text-decoration:none;">제품소개</a> &gt; 서적</p></div></div>
+
+<div class="product-detail">
+  <div class="product-image">📖</div>
+  <div class="product-info">
+    <span style="display:inline-block; padding:4px 12px; background:#F39C12; color:white; border-radius:20px; font-size:0.8rem; font-weight:600; margin-bottom:12px;">베스트셀러</span>
+    <h1>로또벅스88 분석 가이드북</h1>
+    <p style="color:#888;">이철우PD의 10년 분석 노하우 집대성</p>
+    <div class="price-box">
+      <span class="original">35,000원</span><br>
+      <span class="current">29,800원</span>
+      <span style="background:#E74C3C; color:white; padding:2px 8px; border-radius:4px; font-size:0.8rem; margin-left:8px;">15% OFF</span>
+    </div>
+    <p class="desc">10년간의 로또 당첨 데이터를 분석하여 패턴과 확률을 과학적으로 분석한 실전 가이드북입니다. 초보자도 쉽게 따라할 수 있는 번호 선택 전략부터, 고급 통계 분석 기법까지 폭넓게 다루고 있습니다.</p>
+    <div>
+      <a href="#" class="btn-buy" onclick="showToast('구매 기능은 준비 중입니다.', 'warning'); return false;">바로 구매</a>
+      <a href="#" class="btn-cart" onclick="showToast('장바구니 기능은 준비 중입니다.', 'warning'); return false;">장바구니</a>
+    </div>
+  </div>
+</div>
+
+<div class="features">
+  <h2>주요 내용</h2>
+  <div class="feature-list">
+    <div class="feature-item"><h4>📊 데이터 분석 기초</h4><p>로또 번호의 통계적 특성과 출현 빈도 분석법을 기초부터 설명합니다.</p></div>
+    <div class="feature-item"><h4>🔢 패턴 인식 기법</h4><p>연속 번호, 구간별 분포, 홀짝 비율 등 핵심 패턴 분석 방법론을 소개합니다.</p></div>
+    <div class="feature-item"><h4>🎯 실전 번호 선택</h4><p>이론을 실전에 적용하는 구체적인 번호 선택 전략과 조합 방법을 제시합니다.</p></div>
+    <div class="feature-item"><h4>💡 멘탈 관리</h4><p>건전한 로또 문화와 자금 관리, 심리적 접근법에 대해 다룹니다.</p></div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

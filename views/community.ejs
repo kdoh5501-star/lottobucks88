@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; text-align: center; }
+  .page-banner h1 { font-size: 2rem; }
+  .community-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+  .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .board-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .board-section h3 { font-size: 1.1rem; color: #1B4F72; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #F39C12; display: flex; justify-content: space-between; align-items: center; }
+  .board-section h3 a { font-size: 0.85rem; color: #888; text-decoration: none; }
+  .board-section ul { list-style: none; padding: 0; }
+  .board-section li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .board-section li:last-child { border: none; }
+  .board-section li a { color: #333; text-decoration: none; display: flex; justify-content: space-between; }
+  .board-section li a:hover { color: #1B4F72; }
+  .board-section li .meta { color: #999; font-size: 0.85rem; flex-shrink: 0; }
+  @media (max-width: 768px) { .board-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-banner"><div class="container"><h1><i class="fas fa-users"></i> 커뮤니티</h1><p>로또벅스88 회원들과 소통하세요</p></div></div>
+
+<div class="community-container">
+  <div class="board-grid">
+    <div class="board-section">
+      <h3><i class="fas fa-comments"></i> 자유게시판 <a href="/board/free">더보기 &rarr;</a></h3>
+      <ul>
+        <% if (freePosts.length > 0) { freePosts.forEach(p => { %>
+          <li><a href="/board/free/<%= p.id %>"><span><%= p.title %></span><span class="meta"><%= p.nickname %></span></a></li>
+        <% }); } else { %><li style="color:#999;">게시글이 없습니다.</li><% } %>
+      </ul>
+    </div>
+    <div class="board-section">
+      <h3><i class="fas fa-trophy"></i> 당첨후기 <a href="/board/review">더보기 &rarr;</a></h3>
+      <ul>
+        <% if (reviewPosts.length > 0) { reviewPosts.forEach(p => { %>
+          <li><a href="/board/review/<%= p.id %>"><span><%= p.title %></span><span class="meta"><%= p.nickname %></span></a></li>
+        <% }); } else { %><li style="color:#999;">후기가 없습니다.</li><% } %>
+      </ul>
+    </div>
+    <div class="board-section">
+      <h3><i class="fas fa-share-alt"></i> 번호공유 <a href="/board/share">더보기 &rarr;</a></h3>
+      <ul>
+        <% if (sharePosts.length > 0) { sharePosts.forEach(p => { %>
+          <li><a href="/board/share/<%= p.id %>"><span><%= p.title %></span><span class="meta"><%= p.nickname %></span></a></li>
+        <% }); } else { %><li style="color:#999;">공유 번호가 없습니다.</li><% } %>
+      </ul>
+    </div>
+    <div class="board-section">
+      <h3><i class="fas fa-video"></i> 라이브 방송 <a href="/live">바로가기 &rarr;</a></h3>
+      <ul>
+        <li style="text-align:center; padding:24px;"><i class="fas fa-broadcast-tower" style="font-size:2rem; color:#E74C3C; display:block; margin-bottom:12px;"></i>매주 토요일 오후 7시<br>이철우PD 라이브 분석 방송</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

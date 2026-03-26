@@ -1,0 +1,106 @@
+  <!-- 푸터 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <span class="logo-icon">🎱</span>
+            <span class="logo-text">로또벅스<span class="logo-highlight">88</span></span>
+          </div>
+          <p class="footer-desc">데이터 기반 로또 분석의 새로운 패러다임.<br>로또벅스88과 함께 스마트한 번호 선택을 경험하세요.</p>
+          <div class="footer-social">
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fas fa-blog"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>서비스</h4>
+          <ul>
+            <li><a href="/lotto">당첨번호 조회</a></li>
+            <li><a href="/analysis">번호 분석/생성</a></li>
+            <li><a href="/board/share">번호 공유</a></li>
+            <li><a href="/live">라이브 방송</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>제품</h4>
+          <ul>
+            <li><a href="/product/book">로또벅스88 서적</a></li>
+            <li><a href="/product/machine">LB-88 Pro 분석기</a></li>
+            <li><a href="/product/app">로또벅스88 앱</a></li>
+            <li><a href="/products">패키지 상품</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>고객지원</h4>
+          <ul>
+            <li><a href="/support">공지사항</a></li>
+            <li><a href="/support">자주 묻는 질문</a></li>
+            <li><a href="/support">1:1 문의</a></li>
+            <li><a href="/terms">이용약관</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-info">
+          <p>주식회사 로또벅스88 | 대표: 이철우 | 사업자등록번호: 123-45-67890</p>
+          <p>주소: 서울특별시 강남구 테헤란로 123, 로또벅스빌딩 8층</p>
+          <p>고객센터: 1588-8888 | 이메일: support@lottobucks88.com</p>
+        </div>
+        <p class="footer-copyright">&copy; 2026 LottoBucks88. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 공통 JS -->
+  <script>
+    // 토스트 알림
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'exclamation-triangle'}"></i> ${message}`;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // 모바일 메뉴
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.gnb').classList.toggle('active');
+      });
+    }
+
+    // 스티키 헤더
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (header) header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // AJAX 헬퍼
+    async function apiRequest(url, options = {}) {
+      try {
+        const res = await fetch(url, {
+          headers: { 'Content-Type': 'application/json' },
+          ...options,
+          body: options.body ? JSON.stringify(options.body) : undefined
+        });
+        const data = await res.json();
+        if (!data.success && data.message) {
+          showToast(data.message, 'error');
+        }
+        return data;
+      } catch (err) {
+        showToast('네트워크 오류가 발생했습니다.', 'error');
+        return { success: false };
+      }
+    }
+  </script>
+</body>
+</html>

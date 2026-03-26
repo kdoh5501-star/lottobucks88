@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<style>
+  .write-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+  .write-container h2 { font-size: 1.5rem; color: #1B4F72; margin-bottom: 24px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #1B4F72; outline: none; }
+  .form-group textarea { min-height: 300px; resize: vertical; line-height: 1.6; }
+  .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+  .btn-submit { padding: 12px 32px; background: #1B4F72; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .btn-cancel { padding: 12px 32px; background: #ddd; color: #333; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+
+  .lotto-input { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .lotto-input input { width: 60px; text-align: center; }
+</style>
+
+<div class="write-container">
+  <h2><i class="fas fa-pen"></i> <%= boardName %> 글쓰기</h2>
+
+  <form id="writeForm">
+    <% if (boardType === 'free') { %>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select id="category" name="category">
+          <option value="잡담">잡담</option>
+          <option value="질문">질문</option>
+          <option value="정보">정보</option>
+          <option value="후기">후기</option>
+          <option value="유머">유머</option>
+        </select>
+      </div>
+    <% } else if (boardType === 'review') { %>
+      <div class="form-group">
+        <label>당첨 등수</label>
+        <select id="category" name="category">
+          <option value="5등">5등</option>
+          <option value="4등">4등</option>
+          <option value="3등">3등</option>
+          <option value="2등">2등</option>
+          <option value="1등">1등</option>
+        </select>
+      </div>
+    <% } %>
+
+    <div class="form-group">
+      <label>제목</label>
+      <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required maxlength="100">
+    </div>
+
+    <% if (boardType === 'share') { %>
+      <div class="form-group">
+        <label>추천 번호 (6개)</label>
+        <div class="lotto-input">
+          <% for (let i = 1; i <= 6; i++) { %>
+            <input type="number" class="lotto-num" min="1" max="45" placeholder="<%= i %>">
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="form-group">
+      <label>내용</label>
+      <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
+    </div>
+
+    <div class="form-actions">
+      <a href="/board/<%= boardType %>" class="btn-cancel">취소</a>
+      <button type="submit" class="btn-submit">등록하기</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('writeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const data = {
+      title: document.getElementById('title').value,
+      content: document.getElementById('content').value,
+      category: document.getElementById('category')?.value || null
+    };
+
+    // 번호 공유의 경우 로또 번호 추가
+    const lottoInputs = document.querySelectorAll('.lotto-num');
+    if (lottoInputs.length > 0) {
+      const nums = [...lottoInputs].map(el => parseInt(el.value)).filter(n => n >= 1 && n <= 45);
+      if (nums.length === 6 && new Set(nums).size === 6) {
+        data.lotto_numbers = JSON.stringify(nums.sort((a, b) => a - b));
+      }
+    }
+
+    const res = await apiRequest('/board/<%= boardType %>/write', {
+      method: 'POST',
+      body: data
+    });
+
+    if (res.success) {
+      showToast('게시글이 등록되었습니다! +10P', 'success');
+      setTimeout(() => location.href = '/board/<%= boardType %>/' + res.postId, 500);
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>

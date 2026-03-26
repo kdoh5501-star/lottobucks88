@@ -1,0 +1,164 @@
+<%- include('partials/header') %>
+
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 48px 0; text-align: center; }
+  .page-banner h1 { font-size: 2rem; margin-bottom: 8px; }
+  .page-banner p { opacity: 0.85; }
+  .board-container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+  .board-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .board-toolbar .filter-group { display: flex; gap: 8px; }
+  .board-toolbar select, .board-toolbar input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+  .board-toolbar .search-box { display: flex; }
+  .board-toolbar .search-box input { border-radius: 6px 0 0 6px; min-width: 200px; }
+  .board-toolbar .search-box button { padding: 8px 16px; background: #1B4F72; color: white; border: none; border-radius: 0 6px 6px 0; cursor: pointer; }
+  .btn-write { padding: 10px 20px; background: #F39C12; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-write:hover { background: #E67E22; }
+
+  .post-table { width: 100%; border-collapse: collapse; }
+  .post-table th { background: #F8F9FA; padding: 12px 16px; font-size: 0.9rem; color: #666; text-align: left; border-bottom: 2px solid #1B4F72; }
+  .post-table td { padding: 14px 16px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+  .post-table tr:hover { background: #FAFBFC; }
+  .post-table .col-no { width: 60px; text-align: center; color: #999; }
+  .post-table .col-category { width: 80px; }
+  .post-table .col-title { }
+  .post-table .col-author { width: 100px; }
+  .post-table .col-date { width: 90px; color: #999; font-size: 0.85rem; }
+  .post-table .col-stats { width: 80px; text-align: center; color: #999; font-size: 0.85rem; }
+
+  .category-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; }
+  .cat-잡담 { background: #E8F4FD; color: #2980B9; }
+  .cat-질문 { background: #FDE8E8; color: #E74C3C; }
+  .cat-정보 { background: #E8FDE8; color: #27AE60; }
+  .cat-후기 { background: #FDF3E8; color: #E67E22; }
+  .cat-유머 { background: #F3E8FD; color: #8E44AD; }
+  .cat-공지 { background: #1B4F72; color: white; }
+
+  .post-title-link { color: #333; text-decoration: none; }
+  .post-title-link:hover { color: #1B4F72; }
+  .post-title-link .comment-count { color: #E74C3C; font-size: 0.85rem; margin-left: 4px; }
+  .pinned-icon { color: #E74C3C; margin-right: 4px; }
+
+  .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 32px; }
+  .pagination a, .pagination span { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; color: #333; text-decoration: none; font-size: 0.9rem; }
+  .pagination .active { background: #1B4F72; color: white; border-color: #1B4F72; }
+  .pagination a:hover { background: #F8F9FA; }
+
+  .community-nav { display: flex; justify-content: center; gap: 8px; padding: 16px 0; background: #F8F9FA; border-bottom: 1px solid #eee; }
+  .community-nav a { padding: 8px 20px; border-radius: 20px; text-decoration: none; color: #666; font-weight: 500; transition: all 0.3s; }
+  .community-nav a.active { background: #1B4F72; color: white; }
+  .community-nav a:hover { background: #E8EEF2; color: #1B4F72; }
+
+  @media (max-width: 768px) {
+    .post-table .col-no, .post-table .col-date { display: none; }
+    .board-toolbar { flex-direction: column; }
+  }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-comments"></i> 자유게시판</h1>
+    <p>자유롭게 소통하는 로또벅스88 커뮤니티</p>
+  </div>
+</div>
+
+<nav class="community-nav">
+  <a href="/board/free" class="active">자유게시판</a>
+  <a href="/board/review">당첨후기</a>
+  <a href="/board/share">번호공유</a>
+  <a href="/live">라이브 방송</a>
+</nav>
+
+<div class="board-container">
+  <div class="board-toolbar">
+    <div class="filter-group">
+      <select onchange="location.href='/board/free?category='+this.value+'&sort=<%= sort %>'">
+        <option value="">전체 카테고리</option>
+        <option value="잡담" <%= category === '잡담' ? 'selected' : '' %>>잡담</option>
+        <option value="질문" <%= category === '질문' ? 'selected' : '' %>>질문</option>
+        <option value="정보" <%= category === '정보' ? 'selected' : '' %>>정보</option>
+        <option value="후기" <%= category === '후기' ? 'selected' : '' %>>후기</option>
+        <option value="유머" <%= category === '유머' ? 'selected' : '' %>>유머</option>
+      </select>
+      <select onchange="location.href='/board/free?sort='+this.value+'&category=<%= category %>'">
+        <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>최신순</option>
+        <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>인기순</option>
+        <option value="views" <%= sort === 'views' ? 'selected' : '' %>>조회순</option>
+        <option value="comments" <%= sort === 'comments' ? 'selected' : '' %>>댓글순</option>
+      </select>
+    </div>
+    <form class="search-box" action="/board/free" method="get">
+      <input type="text" name="search" placeholder="검색어 입력..." value="<%= search %>">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+  </div>
+
+  <% if (isLoggedIn) { %>
+    <div style="text-align: right; margin-bottom: 16px;">
+      <a href="/board/free/write" class="btn-write"><i class="fas fa-pen"></i> 글쓰기</a>
+    </div>
+  <% } %>
+
+  <table class="post-table">
+    <thead>
+      <tr>
+        <th class="col-no">번호</th>
+        <th class="col-category">분류</th>
+        <th class="col-title">제목</th>
+        <th class="col-author">작성자</th>
+        <th class="col-date">작성일</th>
+        <th class="col-stats">조회/추천</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (posts && posts.length > 0) { %>
+        <% posts.forEach(post => { %>
+          <tr>
+            <td class="col-no">
+              <% if (post.is_pinned) { %><i class="fas fa-thumbtack pinned-icon"></i><% } else { %><%= post.id %><% } %>
+            </td>
+            <td class="col-category">
+              <% if (post.category) { %>
+                <span class="category-badge cat-<%= post.category %>"><%= post.category %></span>
+              <% } %>
+            </td>
+            <td class="col-title">
+              <a href="/board/free/<%= post.id %>" class="post-title-link">
+                <%= post.title %>
+                <% if (post.comment_count > 0) { %>
+                  <span class="comment-count">[<%= post.comment_count %>]</span>
+                <% } %>
+              </a>
+            </td>
+            <td class="col-author"><%= post.nickname %></td>
+            <td class="col-date"><%= post.created_at ? post.created_at.substring(5, 10) : '' %></td>
+            <td class="col-stats"><%= post.view_count %>/<%= post.like_count %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="6" style="text-align:center; padding:40px; color:#999;">게시글이 없습니다.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <% if (totalPages > 1) { %>
+    <div class="pagination">
+      <% if (page > 1) { %>
+        <a href="/board/free?page=<%= page - 1 %>&category=<%= category %>&sort=<%= sort %>&search=<%= search %>">&laquo;</a>
+      <% } %>
+      <% for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) { %>
+        <% if (i === page) { %>
+          <span class="active"><%= i %></span>
+        <% } else { %>
+          <a href="/board/free?page=<%= i %>&category=<%= category %>&sort=<%= sort %>&search=<%= search %>"><%= i %></a>
+        <% } %>
+      <% } %>
+      <% if (page < totalPages) { %>
+        <a href="/board/free?page=<%= page + 1 %>&category=<%= category %>&sort=<%= sort %>&search=<%= search %>">&raquo;</a>
+      <% } %>
+    </div>
+  <% } %>
+
+  <p style="text-align:center; color:#999; margin-top:16px; font-size:0.9rem;">전체 <%= total %>개의 게시글</p>
+</div>
+
+<%- include('partials/footer') %>

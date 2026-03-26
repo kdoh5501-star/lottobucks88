@@ -49,7 +49,7 @@ router.get('/product/:type', (req, res) => {
   if (!validTypes.includes(type)) {
     return res.status(404).render('error', { title: '404', message: '제품을 찾을 수 없습니다.', code: 404 });
   }
-  const titles = { book: '로또벅스88 서적', machine: 'LB-88 Pro 분석기', app: '로또벅스88 앱' };
+  const titles = { book: '로또 1등 패턴의 정석', machine: 'LB-88 Pro 분석기', app: '로또벅스88 앱' };
   res.render(`product-${type}`, { title: `${titles[type]} - 로또벅스88` });
 });
 

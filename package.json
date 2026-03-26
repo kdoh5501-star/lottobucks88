@@ -11,7 +11,7 @@
     "node": ">=18.0.0"
   },
   "keywords": ["lotto", "analysis"],
-  "author": "이철우PD",
+  "author": "로또벅스88",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",

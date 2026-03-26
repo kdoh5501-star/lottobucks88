@@ -274,6 +274,12 @@ p {
   font-weight: 900;
 }
 
+.logo .logo-img {
+  height: 48px;
+  width: auto;
+  border-radius: 8px;
+}
+
 .logo .logo-icon {
   width: 42px;
   height: 42px;
@@ -293,6 +299,12 @@ p {
 
 .logo .logo-num {
   color: var(--gold);
+}
+
+.footer-logo-img {
+  height: 60px;
+  width: auto;
+  border-radius: 8px;
 }
 
 /* GNB (Global Navigation Bar) */

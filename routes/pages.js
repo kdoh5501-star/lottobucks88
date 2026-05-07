@@ -103,4 +103,10 @@ router.get('/terms', (req, res) => {
   res.render('terms', { title: '이용약관 - 로또벅스88' });
 });
 
+
+// QR 전용 랜딩 페이지 (책 QR코드용 - 네비게이션 노출 안함)
+router.get('/qr', (req, res) => {
+  res.render('qr', { title: '로또 1등 패턴의 정석 - 로또벅스88' });
+});
+
 module.exports = router;

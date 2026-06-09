@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" fill="#1565D8"/>
+  <text x="100" y="78" font-family="'Segoe UI', 'Trebuchet MS', 'Arial', sans-serif" font-weight="700" font-style="italic" font-size="30" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">LottoBucks</text>
+  <text x="100" y="160" font-family="'Segoe UI', 'Trebuchet MS', 'Arial', sans-serif" font-weight="800" font-style="italic" font-size="84" fill="#ffffff" text-anchor="middle" letter-spacing="-3">88</text>
+</svg>

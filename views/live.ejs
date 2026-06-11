@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+<style>
+  .page-banner { background: linear-gradient(135deg, #1B4F72, #2C3E50); color: white; padding: 60px 0 50px; }
+  .page-banner h1 { font-size: 2rem; margin-bottom: 10px; }
+  .page-banner p { opacity: 0.85; font-size: 1.05rem; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+  .live-section { max-width: 1200px; margin: 0 auto; padding: 48px 20px; }
+  .section-title { font-size: 1.5rem; color: #1B4F72; margin-bottom: 8px; font-weight: 800; display:flex; align-items:center; gap:10px; }
+  .section-title i { color: #E74C3C; }
+  .section-sub { color: #5D6D7E; margin-bottom: 28px; font-size: 0.95rem; }
+
+  .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .video-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 1px solid #ECEFF1; transition: all 0.3s; }
+  .video-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+  .video-thumb { position: relative; padding-bottom: 56.25%; height: 0; background: #000; overflow:hidden; }
+  .video-thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  .video-body { padding: 16px 20px 20px; }
+  .video-body h3 { font-size: 1rem; color: #1B4F72; margin-bottom: 8px; font-weight: 700; line-height: 1.4; }
+  .video-body .desc { color: #7F8C8D; font-size: 0.85rem; line-height: 1.5; margin-bottom: 10px; }
+  .video-body .meta { display: flex; justify-content: space-between; align-items: center; }
+  .video-body .date { color: #95A5A6; font-size: 0.8rem; }
+  .video-body .pin-badge { background: #F39C12; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: #95A5A6; background: white; border-radius: 16px; border: 1px dashed #E5E8EB; }
+  .empty-state i { font-size: 3rem; color: #BDC3C7; margin-bottom: 12px; }
+
+  @media (max-width: 900px) { .video-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-broadcast-tower"></i> 라이브 방송 다시보기</h1>
+    <p>이철우PD의 매주 분석 라이브 방송을 다시 볼 수 있습니다</p>
+  </div>
+</div>
+
+<section class="live-section">
+  <h2 class="section-title"><i class="fas fa-circle"></i> 라이브 다시보기</h2>
+  <p class="section-sub">최신 방송부터 순서대로 정렬됩니다</p>
+
+  <% if (liveVideos && liveVideos.length > 0) { %>
+    <div class="video-grid">
+      <% liveVideos.forEach(v => { %>
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/<%= v.youtube_id %>" title="<%= v.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-body">
+            <h3><%= v.title %></h3>
+            <% if (v.description) { %><p class="desc"><%= v.description %></p><% } %>
+            <div class="meta">
+              <span class="date"><i class="far fa-calendar"></i> <%= new Date(v.created_at).toLocaleDateString('ko-KR') %></span>
+              <% if (v.is_pinned) { %><span class="pin-badge"><i class="fas fa-thumbtack"></i> 고정</span><% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <i class="fas fa-video-slash"></i>
+      <p>아직 등록된 라이브 다시보기가 없습니다.<br>새 방송이 업로드되면 이곳에 표시됩니다.</p>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

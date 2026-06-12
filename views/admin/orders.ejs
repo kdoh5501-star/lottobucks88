@@ -1,0 +1,135 @@
+<%- include('../partials/header') %>
+<style>
+  .admin-wrap { max-width: 1280px; margin: 24px auto 60px; padding: 0 16px; }
+  .admin-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .admin-head h1 { font-size: 1.6rem; font-weight: 800; color: #1B4F72; }
+  .admin-head .user-info { color: #666; font-size: 0.9rem; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; border-bottom: 2px solid #E5E8EB; padding-bottom: 0; }
+  .tab { padding: 10px 18px; background: #F5F7FA; color: #666; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; text-decoration: none; }
+  .tab.active { background: #1565D8; color: white; }
+  .tab .badge { background: rgba(0,0,0,0.15); color: white; padding: 1px 8px; border-radius: 10px; font-size: 0.8rem; margin-left: 6px; }
+  .tab:not(.active) .badge { background: #DDE1E5; color: #333; }
+
+  .search-box { display: flex; gap: 8px; margin-bottom: 18px; }
+  .search-box input { flex: 1; padding: 10px 14px; border: 1px solid #DDE1E5; border-radius: 8px; font-size: 0.95rem; }
+  .search-box button { background: #1565D8; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+  table { width: 100%; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-collapse: collapse; }
+  th { background: #F5F7FA; color: #1B4F72; font-weight: 700; padding: 12px 10px; text-align: left; font-size: 0.88rem; border-bottom: 2px solid #E5E8EB; }
+  td { padding: 14px 10px; border-bottom: 1px solid #F0F2F5; font-size: 0.92rem; }
+  tr:hover { background: #FAFBFD; }
+
+  .status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; }
+  .status-pending { background: #FFF3E0; color: #E65100; }
+  .status-confirmed { background: #E3F2FD; color: #1565D8; }
+  .status-shipped { background: #E8F5E9; color: #2E7D32; }
+  .status-completed { background: #F3E5F5; color: #6A1B9A; }
+  .status-cancelled { background: #FFEBEE; color: #C62828; }
+
+  .order-no { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #666; }
+  .product-type { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+  .product-book { background: #FFF8EC; color: #B7791F; }
+  .product-machine { background: #E3F2FD; color: #1976D2; }
+  .product-app { background: #F3E5F5; color: #7B1FA2; }
+
+  .btn-link { color: #1565D8; text-decoration: none; font-weight: 600; }
+  .btn-link:hover { text-decoration: underline; }
+
+  .empty { padding: 60px 20px; text-align: center; color: #999; }
+  .empty i { font-size: 3rem; color: #DDE1E5; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    .hide-mobile { display: none; }
+    th, td { padding: 10px 6px; font-size: 0.85rem; }
+  }
+</style>
+
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>📦 주문 관리</h1>
+    <div class="user-info">관리자: <%= user.nickname %> (<%= user.username %>)</div>
+  </div>
+
+  <!-- 상태 탭 -->
+  <div class="tabs">
+    <a href="/admin/orders?status=all" class="tab <%= currentStatus === 'all' ? 'active' : '' %>">
+      전체 <span class="badge"><%= counts.all %></span>
+    </a>
+    <a href="/admin/orders?status=pending" class="tab <%= currentStatus === 'pending' ? 'active' : '' %>">
+      입금대기 <span class="badge"><%= counts.pending %></span>
+    </a>
+    <a href="/admin/orders?status=confirmed" class="tab <%= currentStatus === 'confirmed' ? 'active' : '' %>">
+      입금확인 <span class="badge"><%= counts.confirmed %></span>
+    </a>
+    <a href="/admin/orders?status=shipped" class="tab <%= currentStatus === 'shipped' ? 'active' : '' %>">
+      발송완료 <span class="badge"><%= counts.shipped %></span>
+    </a>
+    <a href="/admin/orders?status=completed" class="tab <%= currentStatus === 'completed' ? 'active' : '' %>">
+      완료 <span class="badge"><%= counts.completed %></span>
+    </a>
+    <a href="/admin/orders?status=cancelled" class="tab <%= currentStatus === 'cancelled' ? 'active' : '' %>">
+      취소 <span class="badge"><%= counts.cancelled %></span>
+    </a>
+  </div>
+
+  <!-- 검색 -->
+  <form class="search-box" method="get" action="/admin/orders">
+    <input type="hidden" name="status" value="<%= currentStatus %>">
+    <input type="text" name="search" value="<%= search %>" placeholder="주문번호 / 받는 분 / 연락처 / 입금자명 검색">
+    <button type="submit">검색</button>
+  </form>
+
+  <% if (orders.length === 0) { %>
+    <div class="empty">
+      <div style="font-size: 3rem; margin-bottom: 8px;">📭</div>
+      <div>해당 조건의 주문이 없습니다.</div>
+    </div>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>주문번호</th>
+          <th>상품</th>
+          <th class="hide-mobile">수량</th>
+          <th>받는 분</th>
+          <th class="hide-mobile">연락처</th>
+          <th>입금자명</th>
+          <th>금액</th>
+          <th>상태</th>
+          <th class="hide-mobile">접수일시</th>
+          <th>상세</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><span class="order-no"><%= o.order_number %></span></td>
+            <td>
+              <span class="product-type product-<%= o.product_type %>">
+                <%= o.product_type === 'book' ? '책' : o.product_type === 'machine' ? '조합기' : '앱' %>
+              </span>
+              <div style="font-size: 0.85rem; color: #666; margin-top: 2px;"><%= o.product_name %></div>
+            </td>
+            <td class="hide-mobile"><%= o.quantity %>개</td>
+            <td><%= o.buyer_name %></td>
+            <td class="hide-mobile"><%= o.buyer_phone %></td>
+            <td><strong><%= o.depositor_name %></strong></td>
+            <td style="color: #E74C3C; font-weight: 700;"><%= o.total_amount.toLocaleString() %>원</td>
+            <td>
+              <span class="status status-<%= o.status %>">
+                <%= o.status === 'pending' ? '입금대기' : o.status === 'confirmed' ? '입금확인' : o.status === 'shipped' ? '발송완료' : o.status === 'completed' ? '완료' : '취소' %>
+              </span>
+            </td>
+            <td class="hide-mobile" style="color: #888; font-size: 0.85rem;">
+              <%= new Date(o.created_at).toLocaleString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
+            </td>
+            <td><a href="/admin/orders/<%= o.id %>" class="btn-link">상세 →</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

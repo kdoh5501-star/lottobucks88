@@ -1,0 +1,178 @@
+<%- include('../partials/header') %>
+<style>
+  .detail-wrap { max-width: 880px; margin: 24px auto 80px; padding: 0 16px; }
+  .back-link { color: #1565D8; text-decoration: none; font-weight: 600; margin-bottom: 14px; display: inline-block; }
+  .back-link:hover { text-decoration: underline; }
+  .detail-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  .detail-head h1 { font-size: 1.5rem; color: #1B4F72; font-weight: 800; }
+  .detail-head .order-no { font-family: 'Courier New', monospace; color: #888; font-size: 0.95rem; margin-top: 4px; }
+
+  .status-badge { display: inline-block; padding: 6px 16px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; }
+  .status-pending { background: #FFF3E0; color: #E65100; }
+  .status-confirmed { background: #E3F2FD; color: #1565D8; }
+  .status-shipped { background: #E8F5E9; color: #2E7D32; }
+  .status-completed { background: #F3E5F5; color: #6A1B9A; }
+  .status-cancelled { background: #FFEBEE; color: #C62828; }
+
+  .card { background: white; border: 1px solid #E5E8EB; border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+  .card h3 { font-size: 1.05rem; color: #1B4F72; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #F0F2F5; }
+
+  .info-row { display: flex; padding: 8px 0; font-size: 0.95rem; }
+  .info-row .label { color: #666; width: 130px; flex-shrink: 0; font-weight: 600; }
+  .info-row .value { color: #333; flex: 1; }
+  .amount-row .value { color: #E74C3C; font-weight: 700; font-size: 1.1rem; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .action-btn { padding: 11px 18px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; }
+  .btn-confirm { background: #1565D8; color: white; }
+  .btn-confirm:hover { background: #0D4A9E; }
+  .btn-ship { background: #2E7D32; color: white; }
+  .btn-ship:hover { background: #1B5E20; }
+  .btn-complete { background: #6A1B9A; color: white; }
+  .btn-complete:hover { background: #4A148C; }
+  .btn-cancel { background: #fff; color: #C62828; border: 1px solid #C62828; }
+  .btn-cancel:hover { background: #FFEBEE; }
+  .btn-revert { background: #FFF3E0; color: #E65100; }
+  .btn-revert:hover { background: #FFE0B2; }
+
+  .memo-box textarea { width: 100%; min-height: 90px; padding: 12px; border: 1px solid #DDE1E5; border-radius: 8px; font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box; }
+  .memo-save { background: #1565D8; color: white; border: none; padding: 9px 18px; border-radius: 7px; cursor: pointer; font-weight: 600; margin-top: 8px; }
+
+  .timeline { font-size: 0.9rem; color: #888; }
+  .timeline div { padding: 3px 0; }
+</style>
+
+<div class="detail-wrap">
+  <a href="/admin/orders" class="back-link">← 주문 목록</a>
+
+  <div class="detail-head">
+    <div>
+      <h1>주문 상세</h1>
+      <div class="order-no"><%= order.order_number %></div>
+    </div>
+    <span class="status-badge status-<%= order.status %>" id="statusBadge">
+      <%= order.status === 'pending' ? '입금대기' : order.status === 'confirmed' ? '입금확인' : order.status === 'shipped' ? '발송완료' : order.status === 'completed' ? '완료' : '취소' %>
+    </span>
+  </div>
+
+  <!-- 상태 변경 액션 -->
+  <div class="card">
+    <h3>⚙️ 상태 변경</h3>
+    <div class="actions">
+      <% if (order.status === 'pending') { %>
+        <button class="action-btn btn-confirm" onclick="updateStatus('confirmed')">입금 확인</button>
+        <button class="action-btn btn-cancel" onclick="updateStatus('cancelled')">주문 취소</button>
+      <% } else if (order.status === 'confirmed') { %>
+        <button class="action-btn btn-ship" onclick="updateStatus('shipped')">발송 완료</button>
+        <button class="action-btn btn-revert" onclick="updateStatus('pending')">입금대기로</button>
+      <% } else if (order.status === 'shipped') { %>
+        <button class="action-btn btn-complete" onclick="updateStatus('completed')">완료 처리</button>
+        <button class="action-btn btn-revert" onclick="updateStatus('confirmed')">입금확인으로</button>
+      <% } else if (order.status === 'cancelled') { %>
+        <button class="action-btn btn-revert" onclick="updateStatus('pending')">취소 해제</button>
+      <% } else if (order.status === 'completed') { %>
+        <span style="color: #666;">완료된 주문입니다.</span>
+        <button class="action-btn btn-revert" onclick="updateStatus('shipped')">발송완료로</button>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- 상품 정보 -->
+  <div class="card">
+    <h3>📦 상품 정보</h3>
+    <div class="info-row"><span class="label">상품</span><span class="value"><%= order.product_name %></span></div>
+    <div class="info-row"><span class="label">단가</span><span class="value"><%= order.product_price.toLocaleString() %>원</span></div>
+    <div class="info-row"><span class="label">수량</span><span class="value"><%= order.quantity %>개</span></div>
+    <div class="info-row"><span class="label">상품금액</span><span class="value"><%= (order.product_price * order.quantity).toLocaleString() %>원</span></div>
+    <div class="info-row"><span class="label">배송비</span><span class="value"><%= order.shipping_fee === 0 ? '무료' : order.shipping_fee.toLocaleString() + '원' %></span></div>
+    <div class="info-row amount-row"><span class="label">총 결제금액</span><span class="value"><%= order.total_amount.toLocaleString() %>원</span></div>
+  </div>
+
+  <!-- 구매자 정보 -->
+  <div class="card">
+    <h3>👤 구매자 정보</h3>
+    <div class="info-row"><span class="label">받는 분</span><span class="value"><%= order.buyer_name %></span></div>
+    <div class="info-row"><span class="label">연락처</span><span class="value"><a href="tel:<%= order.buyer_phone %>"><%= order.buyer_phone %></a></span></div>
+    <% if (order.buyer_email) { %>
+    <div class="info-row"><span class="label">이메일</span><span class="value"><a href="mailto:<%= order.buyer_email %>"><%= order.buyer_email %></a></span></div>
+    <% } %>
+    <div class="info-row"><span class="label">입금자명</span><span class="value"><strong style="color: #E74C3C;"><%= order.depositor_name %></strong></span></div>
+  </div>
+
+  <!-- 배송 정보 -->
+  <% if (order.address) { %>
+  <div class="card">
+    <h3>🚚 배송 정보</h3>
+    <% if (order.postal_code) { %>
+    <div class="info-row"><span class="label">우편번호</span><span class="value"><%= order.postal_code %></span></div>
+    <% } %>
+    <div class="info-row"><span class="label">주소</span><span class="value"><%= order.address %></span></div>
+    <% if (order.address_detail) { %>
+    <div class="info-row"><span class="label">상세주소</span><span class="value"><%= order.address_detail %></span></div>
+    <% } %>
+    <% if (order.memo) { %>
+    <div class="info-row"><span class="label">요청사항</span><span class="value"><%= order.memo %></span></div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <!-- 관리자 메모 -->
+  <div class="card memo-box">
+    <h3>📝 관리자 메모 (구매자에게 보이지 않음)</h3>
+    <textarea id="adminMemo" placeholder="입금 확인 메모, 배송 메모 등"><%= order.admin_memo || '' %></textarea>
+    <button class="memo-save" onclick="saveMemo()">메모 저장</button>
+  </div>
+
+  <!-- 타임라인 -->
+  <div class="card">
+    <h3>🕒 진행 상황</h3>
+    <div class="timeline">
+      <div>📥 접수: <%= new Date(order.created_at).toLocaleString('ko-KR') %></div>
+      <% if (order.confirmed_at) { %><div>✅ 입금확인: <%= new Date(order.confirmed_at).toLocaleString('ko-KR') %></div><% } %>
+      <% if (order.shipped_at) { %><div>📤 발송: <%= new Date(order.shipped_at).toLocaleString('ko-KR') %></div><% } %>
+      <% if (order.cancelled_at) { %><div>❌ 취소: <%= new Date(order.cancelled_at).toLocaleString('ko-KR') %></div><% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ORDER_ID = <%= order.id %>;
+
+  async function updateStatus(status) {
+    const names = { pending: '입금대기', confirmed: '입금확인', shipped: '발송완료', completed: '완료', cancelled: '취소' };
+    if (!confirm(`상태를 "${names[status]}"(으)로 변경하시겠습니까?`)) return;
+    try {
+      const res = await fetch(`/admin/orders/${ORDER_ID}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const j = await res.json();
+      if (j.success) {
+        alert(j.message);
+        location.reload();
+      } else {
+        alert(j.message || '상태 변경에 실패했습니다.');
+      }
+    } catch(e) {
+      alert('네트워크 오류가 발생했습니다.');
+    }
+  }
+
+  async function saveMemo() {
+    const admin_memo = document.getElementById('adminMemo').value;
+    try {
+      const res = await fetch(`/admin/orders/${ORDER_ID}/memo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_memo })
+      });
+      const j = await res.json();
+      alert(j.message || '저장 완료');
+    } catch(e) {
+      alert('네트워크 오류가 발생했습니다.');
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

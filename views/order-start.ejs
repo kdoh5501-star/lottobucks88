@@ -1,0 +1,165 @@
+<%- include('partials/header') %>
+<style>
+  .order-wrap { max-width: 880px; margin: 40px auto 80px; padding: 0 20px; }
+  .order-title { font-size: 1.6rem; font-weight: 800; color: #1B4F72; margin-bottom: 24px; }
+  .order-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; }
+  .product-card { background: #F5F7FA; border-radius: 14px; padding: 20px; text-align: center; }
+  .product-card img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 14px; }
+  .product-card h3 { font-size: 1.1rem; color: #1B4F72; margin-bottom: 6px; }
+  .product-card p { color: #666; font-size: 0.9rem; margin-bottom: 14px; line-height: 1.5; }
+  .product-card .price { font-size: 1.5rem; font-weight: 800; color: #E74C3C; }
+  .form-box { background: white; border: 1px solid #E5E8EB; border-radius: 14px; padding: 28px; }
+  .form-row { margin-bottom: 18px; }
+  .form-row label { display: block; font-weight: 700; color: #333; margin-bottom: 6px; font-size: 0.95rem; }
+  .form-row label .req { color: #E74C3C; }
+  .form-row input, .form-row textarea { width: 100%; padding: 11px 14px; border: 1px solid #DDE1E5; border-radius: 8px; font-size: 1rem; font-family: inherit; box-sizing: border-box; }
+  .form-row input:focus, .form-row textarea:focus { outline: none; border-color: #1565D8; box-shadow: 0 0 0 3px rgba(21,101,216,0.1); }
+  .form-row textarea { min-height: 70px; resize: vertical; }
+  .form-row .hint { color: #888; font-size: 0.85rem; margin-top: 4px; }
+  .qty-row { display: flex; align-items: center; gap: 8px; }
+  .qty-row input { width: 80px; }
+  .summary { background: #F5F7FA; padding: 18px; border-radius: 10px; margin-bottom: 20px; }
+  .summary .line { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.95rem; }
+  .summary .total { font-size: 1.2rem; font-weight: 800; color: #E74C3C; border-top: 1px solid #DDE1E5; padding-top: 10px; margin-top: 6px; }
+  .btn-submit { display: block; width: 100%; background: #1565D8; color: white; border: none; padding: 16px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .btn-submit:hover { background: #0D4A9E; }
+  .btn-submit:disabled { background: #999; cursor: not-allowed; }
+  .notice { background: #FFF9E6; border-left: 4px solid #F39C12; padding: 14px 18px; border-radius: 6px; color: #5D4017; font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px; }
+  @media (max-width: 768px) {
+    .order-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="order-wrap">
+  <h2 class="order-title">주문하기</h2>
+
+  <div class="notice">
+    💡 본 주문은 <strong>무통장 입금 방식</strong>으로 진행됩니다.<br>
+    주문 접수 후 입금 안내 화면에서 안내된 계좌로 입금해주세요. 입금 확인 후 발송됩니다.
+  </div>
+
+  <div class="order-grid">
+    <div class="product-card">
+      <img src="<%= product.image %>" alt="<%= product.name %>">
+      <h3><%= product.name %></h3>
+      <p><%= product.description %></p>
+      <div class="price"><%= product.price.toLocaleString() %>원</div>
+    </div>
+
+    <form class="form-box" id="orderForm" onsubmit="submitOrder(event)">
+      <input type="hidden" name="product_type" value="<%= product.type %>">
+
+      <div class="form-row">
+        <label>수량 <span class="req">*</span></label>
+        <div class="qty-row">
+          <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" onchange="updateSummary()" required>
+          <span>개</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>받는 분 성함 <span class="req">*</span></label>
+        <input type="text" name="buyer_name" id="buyer_name" placeholder="홍길동" required onchange="syncDepositorName()">
+      </div>
+
+      <div class="form-row">
+        <label>연락처 <span class="req">*</span></label>
+        <input type="tel" name="buyer_phone" placeholder="010-1234-5678" required>
+        <div class="hint">발송 안내 SMS를 받으실 번호입니다.</div>
+      </div>
+
+      <div class="form-row">
+        <label>이메일</label>
+        <input type="email" name="buyer_email" placeholder="example@email.com">
+        <div class="hint">선택 입력 — 주문 내역 확인용</div>
+      </div>
+
+      <div class="form-row">
+        <label>입금자명 <span class="req">*</span></label>
+        <input type="text" name="depositor_name" id="depositor_name" placeholder="예금주명과 동일하게" required>
+        <div class="hint">받는 분 성함과 다를 경우 꼭 변경해주세요!</div>
+      </div>
+
+      <% if (product.shippable) { %>
+      <div class="form-row">
+        <label>우편번호</label>
+        <input type="text" name="postal_code" placeholder="12345">
+      </div>
+      <div class="form-row">
+        <label>주소 <span class="req">*</span></label>
+        <input type="text" name="address" placeholder="기본주소" required>
+      </div>
+      <div class="form-row">
+        <label>상세주소</label>
+        <input type="text" name="address_detail" placeholder="동/호수 등">
+      </div>
+      <% } %>
+
+      <div class="form-row">
+        <label>요청사항</label>
+        <textarea name="memo" placeholder="배송 요청사항이 있으시면 적어주세요."></textarea>
+      </div>
+
+      <div class="summary">
+        <div class="line"><span>상품금액</span><span id="subtotal"><%= product.price.toLocaleString() %>원</span></div>
+        <div class="line"><span>배송비</span><span><%= product.shipping_fee === 0 ? '무료' : product.shipping_fee.toLocaleString() + '원' %></span></div>
+        <div class="line total"><span>총 결제금액</span><span id="totalAmount"><%= (product.price + product.shipping_fee).toLocaleString() %>원</span></div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">주문 접수하기</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const PRODUCT_PRICE = <%= product.price %>;
+  const SHIPPING_FEE = <%= product.shipping_fee %>;
+
+  function updateSummary() {
+    const qty = Math.max(1, Math.min(10, parseInt(document.getElementById('quantity').value) || 1));
+    document.getElementById('quantity').value = qty;
+    const subtotal = PRODUCT_PRICE * qty;
+    const total = subtotal + SHIPPING_FEE;
+    document.getElementById('subtotal').textContent = subtotal.toLocaleString() + '원';
+    document.getElementById('totalAmount').textContent = total.toLocaleString() + '원';
+  }
+
+  function syncDepositorName() {
+    const dep = document.getElementById('depositor_name');
+    if (!dep.value) {
+      dep.value = document.getElementById('buyer_name').value;
+    }
+  }
+
+  async function submitOrder(event) {
+    event.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '주문 처리 중...';
+
+    const data = {};
+    new FormData(event.target).forEach((v, k) => data[k] = v);
+
+    try {
+      const res = await fetch('/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const j = await res.json();
+      if (j.success) {
+        window.location.href = j.redirect;
+      } else {
+        alert(j.message || '주문 처리에 실패했습니다.');
+        btn.disabled = false;
+        btn.textContent = '주문 접수하기';
+      }
+    } catch (err) {
+      alert('네트워크 오류가 발생했습니다.');
+      btn.disabled = false;
+      btn.textContent = '주문 접수하기';
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

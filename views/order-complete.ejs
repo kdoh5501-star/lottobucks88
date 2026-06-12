@@ -1,0 +1,129 @@
+<%- include('partials/header') %>
+<style>
+  .complete-wrap { max-width: 720px; margin: 40px auto 80px; padding: 0 20px; }
+  .success-banner { background: linear-gradient(135deg, #1565D8, #0D4A9E); color: white; padding: 36px 28px; border-radius: 16px; text-align: center; margin-bottom: 28px; }
+  .success-banner .check { font-size: 3.5rem; margin-bottom: 8px; }
+  .success-banner h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+  .success-banner p { font-size: 1rem; opacity: 0.95; }
+  .success-banner .order-no { display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; margin-top: 12px; font-weight: 700; }
+
+  .bank-card { background: white; border: 2px solid #1565D8; border-radius: 14px; padding: 26px; margin-bottom: 24px; box-shadow: 0 4px 16px rgba(21,101,216,0.1); }
+  .bank-card h3 { color: #1B4F72; font-size: 1.2rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .bank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F0F2F5; font-size: 1rem; }
+  .bank-row:last-child { border-bottom: none; }
+  .bank-row .label { color: #666; font-weight: 600; }
+  .bank-row .value { color: #1B4F72; font-weight: 700; }
+  .bank-row .account-num { font-family: 'Courier New', monospace; letter-spacing: 1px; font-size: 1.05rem; }
+  .copy-btn { background: #1565D8; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; margin-left: 8px; }
+  .copy-btn:hover { background: #0D4A9E; }
+  .amount-highlight { background: #FFF9E6; padding: 16px; border-radius: 10px; margin-top: 12px; text-align: center; }
+  .amount-highlight .label { font-size: 0.9rem; color: #5D4017; margin-bottom: 4px; }
+  .amount-highlight .amount { font-size: 1.8rem; font-weight: 800; color: #E74C3C; }
+  .amount-highlight .depositor { font-size: 0.95rem; color: #5D4017; margin-top: 8px; }
+
+  .info-card { background: white; border: 1px solid #E5E8EB; border-radius: 14px; padding: 24px; margin-bottom: 24px; }
+  .info-card h3 { color: #1B4F72; font-size: 1.1rem; margin-bottom: 14px; }
+  .info-row { display: flex; padding: 8px 0; font-size: 0.95rem; }
+  .info-row .label { color: #666; width: 110px; flex-shrink: 0; }
+  .info-row .value { color: #333; flex: 1; }
+
+  .notice-box { background: #FFF9E6; border-left: 4px solid #F39C12; padding: 18px; border-radius: 6px; color: #5D4017; line-height: 1.7; font-size: 0.95rem; margin-bottom: 24px; }
+  .notice-box strong { color: #B6520A; }
+
+  .btn-row { display: flex; gap: 12px; }
+  .btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+  .btn-primary { background: #1565D8; color: white; }
+  .btn-primary:hover { background: #0D4A9E; }
+  .btn-secondary { background: #F0F2F5; color: #333; }
+  .btn-secondary:hover { background: #E0E3E7; }
+</style>
+
+<div class="complete-wrap">
+  <div class="success-banner">
+    <div class="check">✓</div>
+    <h1>주문이 접수되었습니다</h1>
+    <p>아래 안내된 계좌로 입금해주세요</p>
+    <div class="order-no">주문번호 <%= order.order_number %></div>
+  </div>
+
+  <!-- 입금 계좌 안내 -->
+  <div class="bank-card">
+    <h3>🏦 입금 계좌 안내</h3>
+    <div class="bank-row">
+      <span class="label">은행</span>
+      <span class="value"><%= bank.name %></span>
+    </div>
+    <div class="bank-row">
+      <span class="label">계좌번호</span>
+      <span class="value">
+        <span class="account-num" id="accountNum"><%= bank.account %></span>
+        <button class="copy-btn" onclick="copyAccount()">복사</button>
+      </span>
+    </div>
+    <div class="bank-row">
+      <span class="label">예금주</span>
+      <span class="value"><%= bank.holder %></span>
+    </div>
+
+    <div class="amount-highlight">
+      <div class="label">총 입금하실 금액</div>
+      <div class="amount"><%= order.total_amount.toLocaleString() %>원</div>
+      <div class="depositor">입금자명: <strong><%= order.depositor_name %></strong></div>
+    </div>
+  </div>
+
+  <!-- 안내 사항 -->
+  <div class="notice-box">
+    <strong>📌 안내 사항</strong><br>
+    • 입금자명을 <strong>"<%= order.depositor_name %>"</strong> 으로 정확히 적어주세요 (확인이 빨라집니다)<br>
+    • 입금 확인 후 <strong>2~3일 이내</strong>에 발송됩니다<br>
+    • 입금 확인이 어려운 경우 1577-9641로 연락주세요<br>
+    • <strong>3일 이내 미입금</strong> 시 주문이 자동 취소될 수 있습니다
+  </div>
+
+  <!-- 주문 정보 -->
+  <div class="info-card">
+    <h3>📋 주문 정보</h3>
+    <div class="info-row"><span class="label">상품명</span><span class="value"><%= order.product_name %></span></div>
+    <div class="info-row"><span class="label">수량</span><span class="value"><%= order.quantity %>개</span></div>
+    <div class="info-row"><span class="label">받는 분</span><span class="value"><%= order.buyer_name %></span></div>
+    <div class="info-row"><span class="label">연락처</span><span class="value"><%= order.buyer_phone %></span></div>
+    <% if (order.address) { %>
+    <div class="info-row">
+      <span class="label">배송지</span>
+      <span class="value">
+        <% if (order.postal_code) { %>(<%= order.postal_code %>)<% } %> <%= order.address %> <%= order.address_detail || '' %>
+      </span>
+    </div>
+    <% } %>
+    <% if (order.memo) { %>
+    <div class="info-row"><span class="label">요청사항</span><span class="value"><%= order.memo %></span></div>
+    <% } %>
+  </div>
+
+  <div class="btn-row">
+    <a href="/" class="btn btn-secondary">홈으로</a>
+    <a href="/products" class="btn btn-primary">다른 제품 보기</a>
+  </div>
+</div>
+
+<script>
+  function copyAccount() {
+    const text = document.getElementById('accountNum').textContent.replace(/-/g, '');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        showtoast && showtoast('계좌번호가 복사되었습니다!', 'success');
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('계좌번호가 복사되었습니다!');
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

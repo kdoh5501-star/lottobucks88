@@ -1,18 +1,58 @@
 <%- include('partials/header') %>
 <style>
-  .hero-app { background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; padding: 80px 0; text-align: center; }
-  .hero-app h1 { font-size: 2.5rem; margin-bottom: 16px; }
-  .hero-app p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 32px; }
-  .hero-app .phone-icon { font-size: 6rem; margin-bottom: 24px; }
-  .app-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .app-btns a { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; background: white; color: #333; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1rem; }
+  .hero-app { background: linear-gradient(180deg, #F5F7FA 0%, #FFFFFF 100%); padding: 60px 0 40px; text-align: center; }
+  .hero-app .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  .hero-app .hero-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center; }
+  .hero-app .phone-wrap { display: flex; justify-content: center; align-items: center; }
+  .hero-app .phone-wrap img { max-width: 320px; width: 100%; height: auto; }
+  .hero-app .hero-text { text-align: left; }
+  .hero-app h1 { font-size: 2.5rem; color: #1B4F72; margin-bottom: 18px; font-weight: 800; }
+  .hero-app .subtitle { font-size: 1.15rem; color: #5D6D7E; margin-bottom: 12px; line-height: 1.6; }
+  .hero-app .feature-badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 24px; }
+  .hero-app .badge { background: #E3F2FD; color: #1565D8; padding: 7px 14px; border-radius: 20px; font-size: 0.92rem; font-weight: 600; }
+  .hero-app .badge.orange { background: #FFF3E0; color: #E65100; }
+  .hero-app .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; align-items: center; }
+  .hero-app .btn-subscribe { display: inline-block; padding: 16px 36px; background: #E74C3C; color: white; border-radius: 12px; font-size: 1.1rem; font-weight: 800; text-decoration: none; box-shadow: 0 6px 16px rgba(231,76,60,0.3); transition: transform 0.15s; }
+  .hero-app .btn-subscribe:hover { transform: translateY(-2px); }
+  .hero-app .app-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-app .app-btns a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; background: white; border: 1px solid #E5E8EB; color: #333; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  @media (max-width: 768px) {
+    .hero-app .hero-grid { grid-template-columns: 1fr; gap: 24px; }
+    .hero-app .hero-text { text-align: center; }
+    .hero-app .feature-badges, .hero-app .cta-row { justify-content: center; }
+    .hero-app h1 { font-size: 1.9rem; }
+  }
+
+  .winning-section { max-width: 1100px; margin: 0 auto; padding: 60px 20px; }
+  .winning-section h2 { text-align: center; color: #1B4F72; font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+  .winning-section .subtitle { text-align: center; color: #5D6D7E; font-size: 1.05rem; margin-bottom: 8px; }
+  .winning-section .highlight { text-align: center; color: #E74C3C; font-weight: 700; font-size: 1.1rem; margin-bottom: 32px; }
+  .winning-card { background: white; border-radius: 16px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); overflow: hidden; max-width: 720px; margin: 0 auto; }
+  .winning-card .header { background: linear-gradient(135deg, #1565D8, #0D4A9E); color: white; padding: 22px 28px; }
+  .winning-card .header .draw-no { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+  .winning-card .header .draw-date { font-size: 0.95rem; opacity: 0.9; }
+  .winning-card table { width: 100%; border-collapse: collapse; }
+  .winning-card thead th { background: #F5F7FA; color: #1B4F72; padding: 14px 12px; font-weight: 700; font-size: 0.95rem; text-align: center; border-bottom: 2px solid #E5E8EB; }
+  .winning-card tbody td { padding: 16px 12px; text-align: center; border-bottom: 1px solid #F0F2F5; font-size: 0.98rem; }
+  .winning-card tbody tr:last-child td { border-bottom: none; }
+  .winning-card tbody tr:hover { background: #FAFBFD; }
+  .winning-card .rank { font-weight: 800; color: #1B4F72; font-size: 1.05rem; }
+  .winning-card .rank.first { color: #E74C3C; }
+  .winning-card .hit-count { color: #2E7D32; font-weight: 700; }
+  .winning-card .prize { color: #E65100; font-weight: 700; }
+  .winning-card .winners { color: #666; }
+  .winning-card .summary-row { background: #FFF9E6; }
+  .winning-card .summary-row td { font-weight: 800; color: #5D4017; padding: 18px 12px; }
+  .winning-card .btn-detail { display: block; text-align: center; padding: 16px; background: #F5F7FA; color: #1565D8; text-decoration: none; font-weight: 700; border-top: 1px solid #E5E8EB; transition: background 0.15s; }
+  .winning-card .btn-detail:hover { background: #E3F2FD; }
+
   .features-grid { max-width: 960px; margin: 0 auto; padding: 48px 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .feature-card { text-align: center; padding: 32px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .feature-card i { font-size: 2.5rem; color: #2ECC71; margin-bottom: 16px; }
+  .feature-card i { font-size: 2.5rem; color: #1565D8; margin-bottom: 16px; }
   .feature-card h3 { margin-bottom: 8px; color: #1B4F72; }
   .feature-card p { color: #666; font-size: 0.95rem; }
-  .pricing { max-width: 960px; margin: 0 auto; padding: 0 20px 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .price-card { background: white; border-radius: 16px; padding: 32px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .pricing { max-width: 960px; margin: 0 auto; padding: 0 20px 48px; display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .price-card { background: white; border-radius: 16px; padding: 32px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.08); max-width: 380px; margin: 0 auto; }
   .price-card.featured { border: 3px solid #F39C12; position: relative; }
   .price-card.featured::before { content: '추천'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #F39C12; color: white; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
   .price-card h3 { color: #1B4F72; }
@@ -21,20 +61,95 @@
   .price-card ul { list-style: none; padding: 0; margin-bottom: 24px; text-align: left; }
   .price-card ul li { padding: 8px 0; color: #555; border-bottom: 1px solid #f0f0f0; }
   .price-card ul li::before { content: '✓ '; color: #2ECC71; font-weight: 700; }
-  @media (max-width: 768px) { .features-grid, .pricing { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
 </style>
 
 <div class="hero-app">
   <div class="container">
-    <div class="phone-icon">📱</div>
-    <h1>로또벅스88 앱</h1>
-    <p>확률 높은 번호 200,000개 내장 + 매년 업데이트<br>언제 어디서나, 스마트한 번호 분석을 손안에서</p>
-    
-    <div style="text-align:center; margin-bottom:20px;"><a href="/order/start/app" style="display:inline-block; padding:16px 44px; background:#E74C3C; color:white; border-radius:10px; font-size:1.15rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(231,76,60,0.3);">연 50,000원 / 구독하기</a></div>
-    <div class="app-btns">
-      <a href="#" onclick="showToast('앱스토어 등록 준비 중입니다.', 'warning'); return false;"><i class="fab fa-apple"></i> App Store</a>
-      <a href="#" onclick="showToast('플레이스토어 등록 준비 중입니다.', 'warning'); return false;"><i class="fab fa-google-play"></i> Google Play</a>
+    <div class="hero-grid">
+      <div class="phone-wrap">
+        <img src="/images/app-mockup-v4.png" alt="로또벅스88 앱 미리보기" />
+      </div>
+      <div class="hero-text">
+        <h1>로또벅스88 앱</h1>
+        <p class="subtitle">확률 높은 번호 200,000개 내장 + 매년 업데이트</p>
+        <p class="subtitle">언제 어디서나, 스마트한 번호 분석을 손안에서</p>
+        <div class="feature-badges">
+          <span class="badge">200,000개 번호 내장</span>
+          <span class="badge orange">매년 업데이트</span>
+          <span class="badge">실시간 분석</span>
+        </div>
+        <div class="cta-row">
+          <a href="/order/start/app" class="btn-subscribe">연 50,000원 / 구독하기</a>
+          <div class="app-btns">
+            <a href="#" onclick="if(typeof showToast!=='undefined'){showToast('앱스토어 등록 준비 중입니다.','warning');} return false;"><i class="fab fa-apple"></i> App Store</a>
+            <a href="#" onclick="if(typeof showToast!=='undefined'){showToast('플레이스토어 등록 준비 중입니다.','warning');} return false;"><i class="fab fa-google-play"></i> Google Play</a>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="winning-section">
+  <h2>등급별 당첨현황 분석</h2>
+  <p class="subtitle">로또벅스88 앱은 확률 높은 번호 200,000개를 내장하고 있습니다.</p>
+  <p class="highlight">이번주 당첨번호가 200,000개 중 몇 개나 포함되어 있는지 확인하세요!</p>
+
+  <div class="winning-card">
+    <div class="header">
+      <div class="draw-no">제 1226회 당첨번호 분석</div>
+      <div class="draw-date">2026년 5월 30일 추첨</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>등위</th>
+          <th>내 적중 수</th>
+          <th>당첨금</th>
+          <th>당첨자 수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rank first">1등</td>
+          <td class="hit-count">1개</td>
+          <td class="prize">2,458,569,713원</td>
+          <td class="winners">10명</td>
+        </tr>
+        <tr>
+          <td class="rank">2등</td>
+          <td class="hit-count">2개</td>
+          <td class="prize">126,080,500원</td>
+          <td class="winners">87명</td>
+        </tr>
+        <tr>
+          <td class="rank">3등</td>
+          <td class="hit-count">21개</td>
+          <td class="prize">33,172,692원</td>
+          <td class="winners">2,150명</td>
+        </tr>
+        <tr>
+          <td class="rank">4등</td>
+          <td class="hit-count">348개</td>
+          <td class="prize">17,400,000원</td>
+          <td class="winners">38,500명</td>
+        </tr>
+        <tr>
+          <td class="rank">5등</td>
+          <td class="hit-count">4,549개</td>
+          <td class="prize">5,000원</td>
+          <td class="winners">654,238명</td>
+        </tr>
+        <tr class="summary-row">
+          <td>전체 합계</td>
+          <td>4,921개</td>
+          <td>—</td>
+          <td>694,985명</td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="/lotto" class="btn-detail">🔍 로또벅스 등급별 당첨현황 보기 →</a>
   </div>
 </div>
 
@@ -53,9 +168,9 @@
     <h3>연간 구독</h3>
     <div class="amount">50,000원<span>/년</span></div>
     <ul>
-      <li>무제한 번호 생성</li>
+      <li>확률 높은 번호 200,000개 내장</li>
+      <li>매년 자동 업데이트</li>
       <li>통계 고급 분석</li>
-      <li>패턴 인식 엔진</li>
       <li>실시간 알림</li>
       <li>라이브 방송 시청</li>
       <li>커뮤니티 이용</li>

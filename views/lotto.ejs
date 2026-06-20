@@ -99,20 +99,6 @@
     </tbody>
   </table>
 
-  <div class="frequency-section">
-    <h3><i class="fas fa-chart-bar"></i> 번호별 출현 빈도 (최근 10회)</h3>
-    <% const maxFreq = Math.max(...Object.values(frequency)); %>
-    <div class="freq-grid">
-      <% for (let i = 1; i <= 45; i++) { %>
-        <div class="freq-item">
-          <% let fc = i <= 10 ? 'ball-yellow' : i <= 20 ? 'ball-blue' : i <= 30 ? 'ball-red' : i <= 40 ? 'ball-gray' : 'ball-green'; %>
-          <span class="mini-ball <%= fc %>" style="width:28px; height:28px; font-size:0.75rem;"><%= i %></span>
-          <div class="count"><%= frequency[i] %>회</div>
-          <div class="freq-bar"><div class="freq-bar-fill" style="width:<%= maxFreq > 0 ? (frequency[i]/maxFreq*100) : 0 %>%"></div></div>
-        </div>
-      <% } %>
-    </div>
-  </div>
 </div>
 
 <%- include('partials/footer') %>

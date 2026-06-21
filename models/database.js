@@ -61,6 +61,9 @@ function migrateVideos() {
     db.run("UPDATE videos SET title = REPLACE(title, 'LB-88 Pro', '로또분석조합기') WHERE title LIKE '%LB-88%'");
     db.run("UPDATE videos SET title = REPLACE(title, 'LB-88', '로또분석조합기') WHERE title LIKE '%LB-88%'");
     db.run("UPDATE videos SET description = REPLACE(description, 'LB-88 Pro', '로또분석조합기') WHERE description LIKE '%LB-88%'");
+    db.run("UPDATE videos SET description = REPLACE(description, 'LB-88', '로또분석조합기') WHERE description LIKE '%LB-88%'");
+    db.run("UPDATE videos SET title = REPLACE(title, '로또분석조합기 분석기', '로또분석조합기') WHERE title LIKE '%조합기 분석기%'");
+    db.run("UPDATE videos SET description = REPLACE(description, '로또분석조합기 분석기', '로또분석조합기') WHERE description LIKE '%조합기 분석기%'");
   } catch (err) {
     console.error('migrateVideos error:', err);
   }

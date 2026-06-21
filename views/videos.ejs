@@ -63,6 +63,35 @@
   <% } else { %><div class="empty-state"><i class="fas fa-video-slash"></i><p>책 영상 준비 중입니다.</p></div><% } %>
 </section>
 
+
+<!-- 책 Q&A 게시판 -->
+<div class="qna-section" style="max-width: 1200px; margin: 0 auto; padding: 0 20px 60px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h3 style="color: #1B4F72; font-size: 1.3rem; font-weight: 800; margin: 0;">📖 책 Q&A 게시판</h3>
+    <a href="/board/book_qna" style="color: #1565D8; text-decoration: none; font-weight: 600; font-size: 0.95rem;">전체 보기 →</a>
+  </div>
+  <p style="color: #5D6D7E; font-size: 0.95rem; margin-bottom: 16px;">책을 읽다가 이해 안 되는 부분이 있으면 질문해주세요. 저자와 다른 독자들이 답변해드립니다.</p>
+  <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;">
+    <% if (typeof bookQnaPosts !== 'undefined' && bookQnaPosts.length > 0) { %>
+      <% bookQnaPosts.forEach(function(p) { %>
+        <a href="/board/book_qna/<%= p.id %>" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #F0F2F5; color: #333; text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#FAFBFD'" onmouseout="this.style.background='white'">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; color: #1B4F72; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= p.title %></div>
+            <div style="font-size: 0.85rem; color: #888;"><%= p.nickname %> · 댓글 <%= p.comment_count %></div>
+          </div>
+          <span style="color: #1565D8; font-weight: 700; flex-shrink: 0; margin-left: 12px;">→</span>
+        </a>
+      <% }); %>
+    <% } else { %>
+      <div style="padding: 40px 20px; text-align: center; color: #888;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">💭</div>
+        <div style="margin-bottom: 14px;">아직 등록된 질문이 없습니다.</div>
+        <a href="/board/book_qna" style="display: inline-block; padding: 10px 24px; background: #1565D8; color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">첫 질문 남기기 →</a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
 <div class="divider"></div>
 
 <section class="videos-section">

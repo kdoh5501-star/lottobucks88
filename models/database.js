@@ -20,6 +20,7 @@ async function initialize() {
   createTables();
   ensureAdminAccounts();
   migrateVideos();
+  seedLatestDraw();
   seedData();
   save();
   setInterval(save, 30000);
@@ -36,6 +37,7 @@ function createTables() {
   db.run("CREATE TABLE IF NOT EXISTS analysis_history (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, numbers TEXT NOT NULL, method TEXT NOT NULL, filters TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
   db.run("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, order_number TEXT UNIQUE NOT NULL, product_type TEXT NOT NULL, product_name TEXT NOT NULL, product_price INTEGER NOT NULL, quantity INTEGER NOT NULL DEFAULT 1, shipping_fee INTEGER NOT NULL DEFAULT 0, total_amount INTEGER NOT NULL, buyer_name TEXT NOT NULL, buyer_phone TEXT NOT NULL, buyer_email TEXT, depositor_name TEXT NOT NULL, postal_code TEXT, address TEXT, address_detail TEXT, memo TEXT, status TEXT NOT NULL DEFAULT 'pending', admin_memo TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, confirmed_at DATETIME, shipped_at DATETIME, cancelled_at DATETIME)");
   db.run("CREATE TABLE IF NOT EXISTS videos (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT NOT NULL, title TEXT NOT NULL, youtube_id TEXT NOT NULL, description TEXT, is_pinned INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
+  db.run("CREATE TABLE IF NOT EXISTS latest_draw (id INTEGER PRIMARY KEY AUTOINCREMENT, drw_no INTEGER UNIQUE NOT NULL, draw_date TEXT NOT NULL, numbers TEXT NOT NULL, bonus INTEGER NOT NULL, tiers_json TEXT, pattern_matches_json TEXT, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
 }
 
 function ensureAdminAccounts() {
@@ -66,6 +68,28 @@ function migrateVideos() {
     db.run("UPDATE videos SET description = REPLACE(description, '로또분석조합기 분석기', '로또분석조합기') WHERE description LIKE '%조합기 분석기%'");
   } catch (err) {
     console.error('migrateVideos error:', err);
+  }
+}
+
+function seedLatestDraw() {
+  try {
+    const exists = db.exec("SELECT id FROM latest_draw WHERE drw_no = 1229");
+    if (exists.length === 0 || exists[0].values.length === 0) {
+      const tiers = JSON.stringify({
+        rank1: { totalPrize: 28158072000, winners: 8, perWinner: 3519759000 },
+        rank2: { totalPrize: 4693012008, winners: 89, perWinner: 52730472 },
+        rank3: { totalPrize: 4693013325, winners: 2925, perWinner: 1604449 },
+        rank4: { totalPrize: 7614500000, winners: 152290, perWinner: 50000 },
+        rank5: { totalPrize: 12919170000, winners: 2583834, perWinner: 5000 }
+      });
+      const matches = JSON.stringify({ rank1: 0, rank2: 0, rank3: 15, rank4: 482, rank5: 5273, total: 5770 });
+      db.run(
+        "INSERT INTO latest_draw (drw_no, draw_date, numbers, bonus, tiers_json, pattern_matches_json) VALUES (?, ?, ?, ?, ?, ?)",
+        [1229, '2026-06-20', '12,13,29,34,37,42', 16, tiers, matches]
+      );
+    }
+  } catch (err) {
+    console.error('seedLatestDraw error:', err);
   }
 }
 

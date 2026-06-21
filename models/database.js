@@ -20,6 +20,7 @@ async function initialize() {
   createTables();
   ensureAdminAccounts();
   migrateVideos();
+  migrateLottoResults();
   seedLatestDraw();
   seedData();
   save();
@@ -55,6 +56,24 @@ function ensureAdminAccounts() {
     if (currentRole !== 'admin') {
       db.run("UPDATE users SET role = 'admin' WHERE username = 'gohkc'");
     }
+  }
+}
+
+function migrateLottoResults() {
+  try {
+    const recent = [
+      [1229, '2026-06-20', 12, 13, 29, 34, 37, 42, 16, 3519759000, 8],
+      [1228, '2026-06-13', 24, 29, 30, 31, 35, 44, 1, 2968000000, 11],
+      [1227, '2026-06-06', 1, 14, 16, 34, 41, 44, 13, 2942000000, 11]
+    ];
+    recent.forEach(function(r) {
+      const exists = db.exec("SELECT id FROM lotto_results WHERE draw_no = " + r[0]);
+      if (exists.length === 0 || exists[0].values.length === 0) {
+        db.run("INSERT INTO lotto_results (draw_no, draw_date, num1, num2, num3, num4, num5, num6, bonus, prize_1st, winners_1st) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", r);
+      }
+    });
+  } catch (err) {
+    console.error('migrateLottoResults error:', err);
   }
 }
 

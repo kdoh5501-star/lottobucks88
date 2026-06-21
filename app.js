@@ -55,6 +55,8 @@ app.use((req, res, next) => {
 
 // ===== 데이터베이스 초기화 =====
 const db = require('./models/database');
+const patternMatcher = require('./lib/patternMatcher');
+const scheduler = require('./lib/scheduler');
 
 // ===== 라우트 =====
 const pageRoutes = require('./routes/pages');
@@ -100,6 +102,12 @@ async function startServer() {
   try {
     await db.initialize();
     console.log('✅ 데이터베이스 초기화 완료');
+
+    // 173,010 패턴 메모리 로딩
+    patternMatcher.loadPatterns();
+
+    // 매주 토요일 20:45 KST 자동 업데이트 스케줄러
+    scheduler.start();
 
     app.listen(PORT, () => {
       console.log(`🚀 로또벅스88 서버 실행 중: http://localhost:${PORT}`);

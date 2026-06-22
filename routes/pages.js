@@ -87,7 +87,9 @@ router.get('/videos', (req, res) => {
   const bookVideos = db.query(`SELECT * FROM videos WHERE category = 'book' ORDER BY is_pinned DESC, created_at DESC`);
   const machineVideos = db.query(`SELECT * FROM videos WHERE category = 'machine' ORDER BY is_pinned DESC, created_at DESC`);
   const appVideos = db.query(`SELECT * FROM videos WHERE category = 'app' ORDER BY is_pinned DESC, created_at DESC`);
-  res.render('videos', { title: '영상 - 로또벅스88', bookVideos, machineVideos, appVideos });
+  
+  const bookQnaPosts = db.query("SELECT p.*, u.nickname FROM posts p JOIN users u ON p.user_id = u.id WHERE p.board_type = 'book_qna' AND p.is_deleted = 0 ORDER BY p.created_at DESC LIMIT 5");
+  res.render('videos', { title: '영상 - 로또벅스88', bookVideos, machineVideos, appVideos , bookQnaPosts});
 });
 
 // 고객센터
@@ -110,6 +112,11 @@ router.get('/register', (req, res) => {
 // 이용약관
 router.get('/terms', (req, res) => {
   res.render('terms', { title: '이용약관 - 로또벅스88' });
+});
+
+// 개인정보처리방침
+router.get('/privacy', (req, res) => {
+  res.render('privacy', { title: '개인정보처리방침 - 로또벅스88' });
 });
 
 
